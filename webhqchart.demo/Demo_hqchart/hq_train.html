@@ -1,0 +1,2018 @@
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+    <title>HQChart示例</title>
+    <!-- 加载资源 -->
+    <link rel="stylesheet" href="../jscommon/umychart.resource/font/iconfont.css" />
+    <link rel="stylesheet" href="../jscommon/umychart.resource/font/drawtool/iconfont.css" />
+    <link rel="stylesheet" href="../jscommon/umychart.resource/css/tools.css" />
+    <link rel="stylesheet" href="../jscommon/umychart.resource/js/codemirror/codemirror.css" />
+</head>
+
+<body>
+
+    
+    <script src="../jscommon/umychart.resource/js/webfont.js"></script>
+    <!-- 引入解析库 -->
+    <script src="../jscommon/umychart.resource/js/marked.min.js"></script>
+    <!-- XSS 安全过滤 -->
+    <script src="../jscommon/umychart.resource/js/purify.min.js"></script>
+    <!-- jquery -->
+    <script src="../jscommon/umychart.resource/js/jquery.min.js"></script>
+
+    <script src='../jscommon/umychart.console.js'></script> <!-- 日志输出 -->
+    <script src="../jscommon/umychart.network.js"></script> <!-- 网络请求分装 -->
+    <script src="../jscommon/umychart.js"></script> <!-- K线图形 -->
+    <script src="../jscommon/umychart.complier.js"></script> <!-- 麦语言解析执行器 -->
+    <script src="../jscommon/umychart.index.data.js"></script> <!-- 基础指标库 -->
+    <script src="../jscommon/umychart.style.js"></script> <!-- 白色风格和黑色风格配置信息 -->
+    <script src="../jscommon/umychart.popMenu.js"></script>
+    <script src="../jscommon/umychart.DialogDrawTool.js"></script>
+    <script src="../jscommon/umychart.PopMinuteChart.js"></script>
+    <script src="../jscommon/umychart.PopKLineChart.js"></script>
+    <script src="../jscommon/umychart.report.js"></script>
+    <script src="../jscommon/umychart.keyboard.js"></script>
+    <script src="../jscommon/umychart.PopKeyboard.js"></script>
+    <script src="../jscommon/umychart.DialogTooltip.js"></script>
+    <script src="../jscommon/umychart.DialogSelectRect.js"></script>
+    <script src="../jscommon/umychart.DialogSearchIndex.js"></script>
+    <script src="../jscommon/umychart.deal.js"></script>
+    <script src="../jscommon/umychart.StockInfo.js"></script>
+    <script src="../jscommon/umychart.StatusBar.js"></script>
+    <script src="../jscommon/umychart.ScrollText.js"></script>
+    <script src="../jscommon/umychart.order.js"></script>
+    <script src="../jscommon/umychart.version.js"></script>
+
+    <script src="./src/MessageData.js"></script>
+    <script src="./src/KLineChart.js"></script>
+    <script src="./src/MinuteChart.js"></script>
+    <script src="./src/ReportChart.js"></script>
+    <script src="./src/DealChart.js"></script>
+    <script src="./src/StockInfoChart.js"></script>
+    <script src="./src/StatusBarChart.js"></script>
+    <script src="./src/KeyboardChart.js"></script>
+    <script src="./src/ScrollTextChart.js"></script>
+    <script src="./src/StockChangeChart.js"></script>
+    <script src="./src/EnvironmentVariable.js"></script>
+    <script src="./src/HQData.js"></script>
+    <script src="./src/CozeAICharDialog.js"></script>
+    <script src="./src//OrderChart.js"></script>
+
+   
+
+
+    <div id="FullDemo">
+        <div id="LeftPanel">
+            <div id="Report">
+                <div id="ReportCtrl"></div>
+            </div>
+        </div>
+
+        <div id="CenterPanel">
+            <div id="PeriodTab">
+                <div id="MinuteDay" class="TabItem">分时</div>
+                <div id="Minute5Day" class="TabItem" style="display: none;">5日</div>
+                <div id="KLineDay" class="TabItem">日线</div>
+                <div id="KLineWeek" class="TabItem">周线</div>
+                <div id="KLineMonth" class="TabItem">月线</div>
+                <div id="KLineYear" class="TabItem" style="display: none;">年线</div>
+
+                <div id="KLineMinute" class="TabItem" style="display: none;">1分钟</div>
+                <div id="KLine5Minute" class="TabItem">5分钟</div>
+                <div id="KLine15Minute" class="TabItem">15分钟</div>
+                <div id="KLine30Minute" class="TabItem">30分钟</div>
+                <div id="KLine60Minute" class="TabItem">60分钟</div>
+
+                <div class="SpaceItem"></div>
+                <div id="StockChip" class="TabItem">筹码</div>
+                <div id="BeforeOpen" class="TabItem" style="display: none;">竞价</div>
+                <div id="DrawTool" class="TabItem">画线</div>
+                <div id="Settings" class="TabItem">设置</div>
+                <div id="Trade" class="TabItem">交易</div>
+
+                <div id="WhiteStyle" class="TabItem">白色风格</div>
+                <div id="BlackStyle" class="TabItem">黑色风格</div>
+                <div id="ChartData" class="TabItem">图形数据</div>
+                <div id="SelfReportData" class="TabItem">自选股数据</div>
+            </div>
+
+            <div id="ChartContainer">
+                <div id="Minute">
+                    <div id="MinuteCtrl"></div>
+                </div>
+                <div id="KLine">
+                    <div id="KLineCtrl"></div>
+                </div>
+            </div>
+
+        </div>
+        <div id="OrderPanel">
+            <div id="OrderPanel_Title">
+                <div>
+                    <span id="OrderPanel_Close_Button">×</span>
+                </div>
+            </div>
+            <div id="OrderCtrl"></div>
+        </div>
+
+        <div id="RightPanel">
+            <div id="StockInfo_Top">
+                <div id="StockBaseData"></div>
+            </div>
+            <div id="StockInfo_Bottom">
+                <div id="DealCtrl"></div>
+                <div id="MinMinuteCtrl" style="display: none;"></div>
+                <div id="StockChangeCtrl" style="display: none;"></div>
+            </div>
+            <div id="StockInfo_Bottom_Tab">
+                <div id="DealList" class="TabItem">笔</div>
+                <div id="DealPriceList" class="TabItem">分</div>
+                <div id="StockMinChart" class="TabItem">势</div>
+                <div id="IndexMinChart" class="TabItem">联</div>
+                <div id="StockChangeChart" class="TabItem">异</div>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="ScrollText">
+        <div id="ScrollTextCtrl"></div>
+    </div>
+
+    <div id="BottomStatusBar">
+        <div id="StatuBarCtrl"></div>
+    </div>
+
+    <!-- 弹框遮罩层 -->
+    <div class="modal-mask" id="settingModal">
+        <!-- 弹框内容 -->
+        <div class="modal-content">
+            <div class="modal-title">系统设置</div>
+            <form id="settingForm">
+                <div class="form-item">
+                    <label for="extendID">HQChartData数据插件ID</label>
+                    <input type="text" id="extendID" name="extendID" placeholder="请输入插件ID">
+
+                    <label for="coze_botid">扣子bot id</label>
+                    <input type="text" id="coze_botid" name="coze_botid" placeholder="请输入扣子bot id">
+
+                    <label for="coze_token">扣子token</label>
+                    <input type="text" id="coze_token" name="coze_token" placeholder="请输入扣子token">
+
+                    <label for="AliAI_APIKey">千问API Key</label>
+                    <input type="text" id="AliAI_APIKey" name="AliAI_APIKey" placeholder="千问API Key">
+
+                </div>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-cancel" id="cancelBtn">取消</button>
+                    <button type="button" class="btn btn-save" id="saveBtn">保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        MARKET_SUFFIX_NAME.GetMarketStatus = function (symbol) { return 2; }
+
+        class ChartContainer {
+            KLineCtrl = new KLineChart();
+            MinuteCtrl = new MinuteChart();
+            SelfReport = new ReportChart();
+            MinDealCtrl = new MinDealChart();
+            MinMinuteCtrl = new MinMinuteChart();
+            StockInfoCtrl = new StockInfoChart();
+            StatusBarCtrl = new StatusBarChart();
+            ScrollTextCtrl = new ScrollTextChart();
+            KeyboardCtrl = new KeyboardChart();
+            StockChangeCtrl = new StockChangeChart();
+            OrderCtrl=new OrderChart();
+            Symbol = "002371.sz";
+            StyleType=STYLE_TYPE_ID.BLACK_ID;
+
+            AICharV2=new AICharDialogV2();
+
+            Create() {
+                HQChartWSClient.NetworkStatusCallback = (data) => { this.UpdateNetworkStatus(data); }
+
+                var resource = JSChart.GetResource();
+                //resource.BGColor=blackStyle.BGColor;
+                resource.ToolbarButtonStyle=1;
+                resource.FrameLogo.Text += ` ${HQCHART_VERSION}`;
+
+                this.ChangeStyle(STYLE_TYPE_ID.BLACK_ID);
+
+                this.KLineCtrl.Create(document.getElementById('KLineCtrl'));
+                this.KLineCtrl.SelectedDataAnalyzeCallback=(data)=>{ this.KLineSelectedDataAnalyze(data); }
+                this.KLineCtrl.SendAIMessageCallback=(data)=>{ this.OnSendAIMessage(data); }
+
+                this.MinuteCtrl.Create(document.getElementById('MinuteCtrl'));
+                this.MinuteCtrl.SelectedDataAnalyzeCallback=(data)=>{ this.MinuteSelectedDataAnalyze(data); }
+                this.MinuteCtrl.SendAIMessageCallback=(data)=>{ this.OnSendAIMessage(data); }
+
+                this.OrderCtrl.Create(document.getElementById('OrderCtrl'));
+                this.OrderCtrl.MoveOnCellCallback=(data, obj)=>{ this.MoveOnOrderCell(data, obj); }
+
+                this.MinDealCtrl.Create(document.getElementById('DealCtrl'));
+                this.MinMinuteCtrl.Create(document.getElementById('MinMinuteCtrl'));
+                this.StockInfoCtrl.Create(document.getElementById('StockBaseData'));
+                this.StockChangeCtrl.Create(document.getElementById('StockChangeCtrl'));
+                this.StockChangeCtrl.OnDBClickRowCallback = (data, obj, ctrl) => { this.ChangeSymbol(data.Data.Item.Symbol); }
+
+                this.StatusBarCtrl.Create(document.getElementById('StatuBarCtrl'));
+                this.StatusBarCtrl.OnClickStockCallback = (data, obj) => { this.ChangeSymbol(data.Symbol); }
+                this.StatusBarCtrl.OnClickRightToolbarCallback = (data, obj) => { this.OnClickBottomToolbar(data, obj); }
+
+                this.ScrollTextCtrl.Create(document.getElementById('ScrollTextCtrl'));
+
+                this.KeyboardCtrl.Create(["KLineCtrl", "MinuteCtrl"]);
+                this.KeyboardCtrl.OnSelectedItemCallback = (data) => { this.OnKeyboardSelected(data); }
+                this.KeyboardCtrl.OnShowCallback = (data) => { this.OnKeyboardShow(data); }
+
+                var SELF_STOCK_LIST_1 =
+                    [
+                        "600000.sh",
+                        "688597.sh",
+                        "688611.sh",
+                        "000001.sh",
+                        "399001.sz",
+                        "300040.sz",
+                        "000001.sz",
+                        "002594.sz",
+                        "01810.hk",
+                        "01211.hk",
+                        "HSCEI.hk",
+
+                        //上海商品期货
+                        "AU0.shfe",
+                        "FU0.shfe",
+
+                        //大连商品期货
+                        "B0.dce",
+
+                        //郑州商品期货
+                        "SR0.czc",
+
+                        //中金
+                        "IF2603.cfe",
+
+                        //广州期货交易所
+                        "SI0.gzfe",
+
+                        //上海国际能源交易中心
+                        "BC0.ine",
+
+                        //北交所
+                        "920000.bj",
+                        "899050.bj",
+
+                        //美股
+                        "MSFT.nsdaq",
+                        "BABA.nyse",
+
+                        "IXIC.usai",
+                        "DJI.usai",
+                        "INX.usai",
+
+                    ];
+
+                this.SelfReport.HQData.SetSelfBlock("自选股1", SELF_STOCK_LIST_1);
+                this.SelfReport.OnClickRowCallback = (data, obj) => { this.OnClickReportRow(data, obj); }
+                this.SelfReport.Create(document.getElementById('ReportCtrl'));
+
+                var divKLine = document.getElementById('KLine');
+                divKLine.style["visibility"] = "visible";
+                divKLine.style["display"] = "block";
+
+                var divMinute = document.getElementById('Minute');
+                divMinute.style["visibility"] = "visible";
+                divMinute.style["display"] = "none";
+
+                document.getElementById('MinuteDay').onmousedown = (e) => { this.Show(1, 1); }
+                document.getElementById('Minute5Day').onmousedown = (e) => { this.Show(1, 5); }
+
+                document.getElementById('KLineDay').onmousedown = (e) => { this.Show(0, 0); }
+                document.getElementById('KLineWeek').onmousedown = (e) => { this.Show(0, 1); }
+                document.getElementById('KLineMonth').onmousedown = (e) => { this.Show(0, 2); }
+                document.getElementById('KLineYear').onmousedown = (e) => { this.Show(0, 3); }
+
+
+                document.getElementById('KLineMinute').onmousedown = (e) => { this.Show(0, 4); }
+                document.getElementById('KLine5Minute').onmousedown = (e) => { this.Show(0, 5); }
+                document.getElementById('KLine15Minute').onmousedown = (e) => { this.Show(0, 6); }
+                document.getElementById('KLine30Minute').onmousedown = (e) => { this.Show(0, 7); }
+                document.getElementById('KLine60Minute').onmousedown = (e) => { this.Show(0, 8); }
+
+
+                document.getElementById('WhiteStyle').onmousedown = (e) => { this.ChangeStyle(STYLE_TYPE_ID.WHITE_ID); }
+                document.getElementById('BlackStyle').onmousedown = (e) => { this.ChangeStyle(STYLE_TYPE_ID.BLACK_ID); }
+                document.getElementById('ChartData').onmousedown = (e) => { this.DownloadChartData(); }
+                document.getElementById('SelfReportData').onmousedown = (e) => { this.DownloadSelfReportData(); }
+                
+
+                document.getElementById('StockChip').onmousedown = (e) => { this.EnableStockChip(); }
+                document.getElementById('DrawTool').onmousedown = (e) => { this.ShowDrawTool(); }
+                document.getElementById('BeforeOpen').onmousedown = (e) => { this.EnableBeforeOpen(); }
+                document.getElementById('Settings').onmousedown = (e) => { this.OnSettings(); }
+                document.getElementById("Trade").onmousedown = (e) => { this.OpenTradePanel(); }
+                document.getElementById("OrderPanel_Close_Button").onmousedown=(e)=>{ this.CloseTradePanel(); }
+
+                document.getElementById('DealList').onmousedown = (e) => { this.OnClickStockInfoTab("DealList"); }
+                document.getElementById('DealPriceList').onmousedown = (e) => { this.OnClickStockInfoTab("DealPriceList"); }
+                document.getElementById('StockMinChart').onmousedown = (e) => { this.OnClickStockInfoTab("StockMinChart"); }
+                document.getElementById('IndexMinChart').onmousedown = (e) => { this.OnClickStockInfoTab("IndexMinChart"); }
+                document.getElementById('StockChangeChart').onmousedown = (e) => { this.OnClickStockInfoTab("StockChangeChart"); }
+
+               
+
+                /*
+                var AryText=
+                [
+                    { Content:[ { Text:"滚动信息1:36238347-D299-42DA-BAA2-3A3C1B5A8ACB" } ] },
+                    { Content:[ { Text:"滚动信息2:358D6F13-C845-4AD1-8415-A9C3A62C1F1E."}, ] },
+                    { Content:[ { Text:"滚动信息3:144F91C3-6181-4C47-A620-62AAFA3BB377."}, ] },
+                    { Content:[ { Text:"滚动信息4:BCC78A08-84B3-4A10-8CE8-13C64C72972D."}, ] },
+                    { Content:[ { Text:"滚动信息5:1CCF5538-E20D-4121-B6A7-5E997AEBBC60."}, ] },
+                    { Content:[ { Text:"滚动信息6:921156AE-05BF-4EE9-8EE0-2DFF32DC94A4."}, ] },
+                    { Content:[ { Text:"滚动信息7:2DBB8E54-E001-4A62-BB47-62849AEC6DA6."}, ] },
+                    { Content:[ { Text:"滚动信息8:FC784BDE-038C-4C8D-8858-55A3E8EEE1E5."}, ] },
+                    { Content:[ { Text:"滚动信息9:2BB898AF-C4D4-4430-AF60-00852F16B2B0."}, ] },
+                ];
+                this.ScrollTextCtrl.Chart.AddText(AryText);
+                */
+
+                this.UpdataToolbar(0);
+
+                addEventListener("resize", (event) => { this.OnSize(event); })
+
+                this.OnSize();
+
+                //this.ChangeSymbol("300750.sz");
+                this.ChangeSymbol("600000.sh");
+                //this.ChangeSymbol("10010723.sho")
+
+                window.addEventListener('storage', (event) => { this.OnRecvPageMessage(event); });
+
+                this.AICharV2.Create();
+                this.AICharV2.GetHQChartDataCallback=(option)=>{ return this.GetHQChartData(option); }
+            }
+
+            //type 1=分时图     0=K线图
+            Show(type, period) {
+                if (type === 0) {
+                    var divKLine = document.getElementById('KLine');
+                    divKLine.style["visibility"] = "visible";
+                    divKLine.style["display"] = "block";
+
+                    var divMinute = document.getElementById('Minute');
+                    divMinute.style["visibility"] = "visible";
+                    divMinute.style["display"] = "none";
+                    this.MinuteCtrl.Hide();
+
+                    this.KLineCtrl.Hide();
+                    this.KLineCtrl.ChangePeriod(period)
+
+                    this.UpdataToolbar(type);
+                }
+                else if (type === 1) {
+                    var divMinute = document.getElementById('Minute');
+                    divMinute.style["visibility"] = "visible";
+                    divMinute.style["display"] = "block";
+
+                    var divKLine = document.getElementById('KLine');
+                    divKLine.style["visibility"] = "visible";
+                    divKLine.style["display"] = "none";
+                    this.KLineCtrl.Hide();
+
+                    this.MinuteCtrl.ChangeDayCount(period);
+                    this.UpdataToolbar(type);
+                }
+            }
+
+            ChangeStyle(value) 
+            {
+                this.StyleType=value;
+
+                var style = HQChartStyle.GetStyleConfig(value); //读取风格配置
+                JSChart.SetCSSStyle(value);
+                JSChart.SetStyle(style);
+
+                var pixelRatio = GetDevicePixelRatio();
+                var resource = JSChart.GetResource();
+                //resource.ToolbarButtonStyle = 1;
+                resource.Report.Item.Font.Size = 12;
+                resource.Report.Item.Mergin.Top = 8 * pixelRatio;
+                resource.Report.Item.Mergin.Bottom = 8 * pixelRatio;
+
+                //resource.KLineToolbar.IsDrawTitleBG=true;
+                //resource.KLineToolbar.IsShowNameArrow=true;
+
+                //resource.MinuteToolbar.IsDrawTitleBG=true;
+                //resource.MinuteToolbar.IsShowNameArrow=true;
+
+                if (value==STYLE_TYPE_ID.BLACK_ID)
+                {
+                    resource.OrderList.AryColor=[];
+                    resource.OrderList.AryColor.push("rgb(235,53,67)");     //涨=0
+                    resource.OrderList.AryColor.push("rgb(50,205,50)");     //跌=1
+                    resource.OrderList.AryColor.push("rgb(220,220,220)");   //平=2
+                    resource.OrderList.AryColor.push("rgb(255,165,0)");     //量=3
+                    resource.OrderList.AryColor.push("rgb(235,53,67)");      //买背景=4
+                    resource.OrderList.AryColor.push("rgb(50,205,50)")       //卖背景=5
+                    resource.OrderList.AryColor.push("rgb(235,53,67)");     //买边框=6
+                    resource.OrderList.AryColor.push("rgb(50,205,50)");     //卖边框=7
+                }
+                else
+                {
+                    resource.OrderList.AryColor=[];
+                    resource.OrderList.AryColor.push("rgb(235,53,67)");     //涨=0
+                    resource.OrderList.AryColor.push("rgb(40,96,249)");     //跌=1
+                    resource.OrderList.AryColor.push("rgb(120,120,120)");   //平=2
+                    resource.OrderList.AryColor.push("rgb(121,122,123)");   //量=3
+                    resource.OrderList.AryColor.push("rgb(227,239,253)");      //买背景=4
+                    resource.OrderList.AryColor.push("rgb(255,235,236)")       //卖背景=5
+                    resource.OrderList.AryColor.push("rgb(41,89,220)");     //买边框=6
+                    resource.OrderList.AryColor.push("rgb(242,54,69)");     //卖边框=7
+                }
+
+                if (this.MinuteCtrl) this.MinuteCtrl.ReloadResource();  //动态更新颜色配置  
+                if (this.KLineCtrl) this.KLineCtrl.ReloadResource();    //动态更新颜色配置  
+                if (this.SelfReport) this.SelfReport.ReloadResource();
+                if (this.MinDealCtrl) this.MinDealCtrl.ReloadResource();
+                if (this.MinMinuteCtrl) this.MinMinuteCtrl.ReloadResource();
+                if (this.StockInfoCtrl) this.StockInfoCtrl.ReloadResource();
+                if (this.StatusBarCtrl) this.StatusBarCtrl.ReloadResource();
+                if (this.KeyboardCtrl) this.KeyboardCtrl.ReloadResource();
+                if (this.ScrollTextCtrl) this.ScrollTextCtrl.ReloadResource();
+                if (this.StockChangeCtrl) this.StockChangeCtrl.ReloadResource();
+                if (this.OrderCtrl) this.OrderCtrl.ReloadResource();
+
+            }
+
+            DownloadTextFile(content,fileName)
+            {
+                const element = document.createElement('a');
+  
+                // 将文本转成 blob，再生成下载链接
+                const blob = new Blob([content], { type: 'text/plain' });
+                element.href = URL.createObjectURL(blob);
+                
+                // 设置文件名
+                element.download = fileName;
+                
+                // 模拟点击下载
+                document.body.appendChild(element);
+                element.click();
+                
+                // 清理
+                document.body.removeChild(element);
+                URL.revokeObjectURL(element.href);
+            }
+
+            DownloadSelfReportData()
+            {
+                if (!this.SelfReport) return null;
+
+                var option= 
+                { 
+                    //AryField:[ { Title:"股票代码", Type:REPORT_COLUMN_ID.SYMBOL_ID }],  //指定输出字段
+                }
+                var data=this.SelfReport.GetGraphicsDescription(option);
+                if (!data) return;
+                console.log("[DownloadSelfReportData] data=", data);
+
+                this.DownloadTextFile(data.Data, `自选股数据.txt`);
+            }
+
+            //下载给AI分析的原始数据
+            DownloadChartData()
+            {
+                var divKLine = document.getElementById('KLine');
+                var divMinute = document.getElementById('Minute');
+
+                var data=null;
+                if (divKLine.style["display"]=="block") data=this.KLineCtrl.GetGraphicsDescription( 
+                    { 
+                        DataRange:{ Count:300 }, 
+                        //AryWindow:[ ], 
+                        //AryInfo:[{ Name:"除权"}]
+                    } );
+
+                else if (divMinute.style["display"]=="block") data=this.MinuteCtrl.GetGraphicsDescription({ DataRange:{ Count:10 }});
+                
+                if (!data) return;
+
+                console.log("[OnAIAnalyze] data=", data);
+
+                this.DownloadTextFile(data.Data, `${data.Symbol}_图形数据.txt`);
+            }
+
+            EnableStockChip() {
+                if (!this.KLineCtrl) return;
+                this.KLineCtrl.EnableStockChip();
+            }
+
+            ShowDrawTool() {
+                var divKLine = document.getElementById('KLine');
+                if (divKLine.style["display"] == "block" && this.KLineCtrl) {
+                    this.KLineCtrl.ShowDrawTool();
+                    return;
+                }
+
+                var divMinute = document.getElementById('Minute');
+                if (divMinute.style["display"] == "block" && this.MinuteCtrl) {
+                    this.MinuteCtrl.ShowDrawTool();
+                }
+            }
+
+            EnableBeforeOpen() {
+                if (this.MinuteCtrl) this.MinuteCtrl.EnableBeforeOpen();
+            }
+
+            UpdataToolbar(type) {
+                var dom = document.getElementById('StockChip');
+                dom.style["display"] = (type === 0 ? "block" : "none");
+
+                //dom=document.getElementById('BeforeOpen');
+                //dom.style["display"]=(type===1?"block":"none");
+            }
+
+            OnClickReportRow(data, obj) {
+                var symbol = data.Data.Symbol;
+                this.ChangeSymbol(symbol);
+            }
+
+            MoveOnOrderCell(data, obj)
+            {
+                var infoItem=new CoordinateInfo();
+                infoItem.ID="8888-01";
+                infoItem.Type=1;
+               
+                infoItem.LineDash=[5,5];
+                var bgColor='rgb(255,255,255)';
+                if (this.StyleType==STYLE_TYPE_ID.BLACK_ID) bgColor="rgb(0,0,0)";
+
+                if (data.Data)
+                {
+                    var dec=JSChart.GetfloatPrecision(obj.Symbol);
+                    var cell=data.Data.CellInfo;
+                    var price=data.Data.Price;
+                    infoItem.Value=price;
+                    infoItem.IsShow=true;
+                    if (cell.Type===1) //买
+                    {
+                        var color="rgba(235,53,67,0.5)"
+                        infoItem.LineColor=color;
+                        infoItem.Message[1]=[ { Text:` ${price.toFixed(dec)} `, BGColor:bgColor, TextColor:color, Border:{ Color:color } } ];
+                    }
+                    else if(cell.Type===2) //卖
+                    {
+                        var color="rgba(50,205,50,0.5)"
+                        infoItem.LineColor=color;
+                        infoItem.Message[1]=[ { Text:` ${price.toFixed(dec)} `, BGColor:bgColor, TextColor:color, Border:{ Color:color } } ];
+                    }
+                }
+                else
+                {
+                    infoItem.IsShow=false
+                }
+                
+                this.KLineCtrl.SetSystemHorizontalInfo(0, infoItem, { Redraw:true })
+            }
+
+            OnClickStockInfoTab(id) {
+                if (id == "DealList") {
+                    if (this.MinMinuteCtrl) this.MinMinuteCtrl.Show(false);
+                    if (this.StockChangeCtrl) this.StockChangeCtrl.Show(false);
+                    if (this.MinDealCtrl) this.MinDealCtrl.Show(true, { Symbol: this.Symbol, ShowType: 0 });
+                }
+                else if (id == "DealPriceList") {
+                    if (this.MinMinuteCtrl) this.MinMinuteCtrl.Show(false);
+                    if (this.StockChangeCtrl) this.StockChangeCtrl.Show(false);
+                    if (this.MinDealCtrl) this.MinDealCtrl.Show(true, { Symbol: this.Symbol, ShowType: 2 });
+                }
+                else if (id == "StockMinChart") {
+                    if (this.MinDealCtrl) this.MinDealCtrl.Show(false);
+                    if (this.StockChangeCtrl) this.StockChangeCtrl.Show(false);
+                    if (this.MinMinuteCtrl) this.MinMinuteCtrl.Show(true, { Symbol: this.Symbol, IsIndexChart: false });
+
+                }
+                else if (id == "IndexMinChart") {
+                    if (this.MinDealCtrl) this.MinDealCtrl.Show(false);
+                    if (this.StockChangeCtrl) this.StockChangeCtrl.Show(false);
+                    if (this.MinMinuteCtrl) this.MinMinuteCtrl.Show(true, { Symbol: this.GetIndexSymbol(this.Symbol), IsIndexChart: true })
+                }
+                else if (id == "StockChangeChart") {
+                    if (this.MinDealCtrl) this.MinDealCtrl.Show(false);
+                    if (this.MinMinuteCtrl) this.MinMinuteCtrl.Show(false);
+                    if (this.StockChangeCtrl) this.StockChangeCtrl.Show(true);
+                }
+            }
+
+            //获取对应的指数代码
+            GetIndexSymbol(symbol) {
+                var indexSymbol = "000001.sh";
+                if (!symbol) return indexSymbol;
+                var upperSymbol = symbol.toUpperCase();
+                if (MARKET_SUFFIX_NAME.IsSH(upperSymbol)) {
+                    indexSymbol = "000001.sh";
+                }
+                else if (MARKET_SUFFIX_NAME.IsSZ(upperSymbol)) {
+                    indexSymbol = "399001.sz";
+                }
+                else if (MARKET_SUFFIX_NAME.IsHK(upperSymbol)) {
+                    indexSymbol = "HSI.hk";
+                }
+                else if (MARKET_SUFFIX_NAME.IsBJ(upperSymbol)) {
+                    indexSymbol = "899050.bj";
+                }
+                else if (MARKET_SUFFIX_NAME.IsSHFE(upperSymbol) || MARKET_SUFFIX_NAME.IsDCE(upperSymbol) || MARKET_SUFFIX_NAME.IsCZCE(upperSymbol) || MARKET_SUFFIX_NAME.IsCFFEX(upperSymbol) ||
+                    MARKET_SUFFIX_NAME.IsGZFE(upperSymbol) || MARKET_SUFFIX_NAME.IsGZFE(upperSymbol) || MARKET_SUFFIX_NAME.IsINE(upperSymbol)) {
+                    var info = MARKET_SUFFIX_NAME.SplitSymbol(symbol, "A+D+");
+                    if (info) {
+                        indexSymbol = `${info.AryString[0]}0.${info.Market}`;
+                    }
+                }
+
+                return indexSymbol;
+            }
+
+            ChangeSymbol(symbol) {
+                this.Symbol = symbol;
+
+                if (this.MinuteCtrl) this.MinuteCtrl.ChangeSymbol(symbol);
+
+                var option =
+                {
+                    Windows:
+                        [
+                            { Index: "MA3" },
+
+                            {
+                                Index: "RSI",
+                                /*
+                                Lock:
+                                {
+                                    IsLocked: true,             //是否上锁
+                                    Callback: (data)=>
+                                    { 
+                                        var frameID=data.ChartPaint.ChartFrame.Identify;
+                                        var indexData=data.HQChart.WindowIndex[frameID];
+    
+                                    }, //this.UnlockIndex, //点击上锁区域回调函数
+                                    BG: ['rgba(245,245,220, 0.5)', "rgb(100,255,100)"],     //锁区域背景色
+                                    //TextColor: 'rgb(255,165,79)',   //锁区域输出文字颜色
+                                    // Text: '\ue611',                  //锁区域输出文字内容
+                                    // Font: '40px iconfont',           //锁区域输出文字字体 支持iconfont
+                                    Count: 12,                      //上锁主右边几条数据  
+                                    Text:
+                                    [
+                                        //{ Text:"付费指标", TextMargin:{ Top:2, Bottom:2 }, YOffset:-2, Font:`${25*GetDevicePixelRatio()}px 微软雅黑` },
+                                        //{ Image:{ Data:image1, Width:50*GetDevicePixelRatio(), Height:50*GetDevicePixelRatio() }, TextMargin:{ Top:2, Bottom:2 }, YOffset:-2, Align:1, },
+                                        //{ Text:"\ue611", TextMargin:{ Top:2, Bottom:2 }, YOffset:-2, Align:1, Font:`${40*GetDevicePixelRatio()}px iconfont`, Color:"rgb(100,100,100)" },
+                                        { Text:"描述信息:XX", TextMargin:{ Top:2, Bottom:2 }, YOffset:-2,},
+                                        { Text:"\ue611", TextMargin:{ Top:2, Bottom:2 }, YOffset:-2, Align:1, Font:`${40*GetDevicePixelRatio()}px iconfont`, Color:"rgb(100,0,100)" },
+                                    ]   
+                                } 
+                                */
+                            }
+                        ]
+                }
+
+                var option = null;
+                if (this.KLineCtrl) this.KLineCtrl.ChangeSymbol(symbol, option);
+
+                if (this.MinDealCtrl && this.MinDealCtrl.IsShow()) this.MinDealCtrl.ChangeSymbol(symbol);
+
+                if (this.MinMinuteCtrl && this.MinMinuteCtrl.IsShow()) {
+                    if (this.MinMinuteCtrl.IsIndexChart)
+                        this.MinMinuteCtrl.ChangeSymbol(this.GetIndexSymbol(symbol));
+                    else
+                        this.MinMinuteCtrl.ChangeSymbol(symbol);
+                }
+
+                if (this.StockInfoCtrl) this.StockInfoCtrl.ChangeSymbol(symbol);
+                if (this.OrderCtrl) this.OrderCtrl.ChangeSymbol(symbol);
+            }
+
+            //整体布局
+            OnSize(event) {
+                var height = $(window).height();
+                var width = $(window).width();
+
+                var leftWidth = 250;
+                var rightWidth = 300;
+                var orderPanelWidth=0;
+                var orderPanel=document.getElementById('OrderPanel');
+                if (orderPanel.style.display=="block")
+                {
+                    orderPanelWidth=350+4;
+                    orderPanel.style.width="350px";
+                }
+
+                var centerWidth = width-250-300-orderPanelWidth;
+
+                var centerPanel = document.getElementById('CenterPanel')
+                centerPanel.style.width = centerWidth + 'px';
+
+                this.OnSizeStatusBar(width, height);
+
+                this.OnSizeStockInfo(width, height);
+            }
+
+            OnSizeStockInfo(width, height) {
+                var height = $("#RightPanel")[0].offsetHeight;
+                var tabHeight = $("#StockInfo_Bottom_Tab")[0].offsetHeight;
+                var topPanelHeight = 500;
+                var pixelRatio = GetDevicePixelRatio();
+                topPanelHeight = ((20 * pixelRatio + 15) + (16 * pixelRatio + 15) + (20 * pixelRatio) * 10 + (20 * pixelRatio) * 9) / pixelRatio;   //动态计算高度
+                var bottomPanelHeight = height - topPanelHeight - tabHeight;
+
+                var topPanel = document.getElementById('StockInfo_Top');
+                topPanel.style.height = topPanelHeight + 'px';
+
+                var bottomPanel = document.getElementById('StockInfo_Bottom');
+                bottomPanel.style.height = bottomPanelHeight + 'px';
+            }
+
+            OnSizeStatusBar(width, height) {
+                var statusBarHeight = this.GetStatusBarHeight();
+                var scrollTextHeight = this.GetScrollTextHeight();
+
+                var statusBar = document.getElementById('BottomStatusBar');
+                statusBar.style.height = `${statusBarHeight}px`;
+
+                var scrollText = document.getElementById('ScrollText');
+                scrollText.style.height = `${scrollTextHeight}px`;
+
+                var fullDemo = document.getElementById('FullDemo');
+                fullDemo.style.height = `${height - statusBarHeight - scrollTextHeight - 2}px`;
+            }
+
+            GetStatusBarHeight() {
+                var pixelRatio = GetDevicePixelRatio();
+                var statusBarHeigth = (14 * pixelRatio + (5 + 5) * pixelRatio) / pixelRatio;
+
+                return statusBarHeigth;
+            }
+
+            GetScrollTextHeight() {
+                var pixelRatio = GetDevicePixelRatio();
+                var heigth = 20;
+
+                return heigth;
+            }
+
+
+            //设置
+            OnSettings() {
+                const modalMask = document.getElementById('settingModal');
+                const cancelBtn = document.getElementById('cancelBtn');
+                const settingForm = document.getElementById('settingForm');
+                const input = document.getElementById('extendID');
+                const cozeBotid = document.getElementById('coze_botid');
+                const cozeToken = document.getElementById('coze_token');
+                const aliAPIKey=document.getElementById("AliAI_APIKey");
+                if (!modalMask) return;
+
+                input.value = EnvironmentVariable.TargetExtensionID;
+                cozeBotid.value = EnvironmentVariable.CozeAI.BotID;
+                cozeToken.value = EnvironmentVariable.CozeAI.Token;
+                aliAPIKey.value=EnvironmentVariable.AliAI.ApiKey;
+
+                cancelBtn.onclick = (e) => {
+                    modalMask.style.display = 'none';
+                };
+
+                saveBtn.onclick = (e) => {
+                    const input = document.getElementById('extendID');
+                    var value = input.value.trim();
+                    EnvironmentVariable.TargetExtensionID = value;
+
+                    var value = cozeBotid.value.trim();
+                    EnvironmentVariable.CozeAI.BotID = value;
+
+                    var value = cozeToken.value.trim();
+                    EnvironmentVariable.CozeAI.Token = value;
+
+                    var value = aliAPIKey.value.trim();
+                    EnvironmentVariable.AliAI.ApiKey = value;
+
+                    EnvironmentVariable.Save();
+
+                    modalMask.style.display = 'none';
+
+                    setTimeout(() => { location.reload(); }, 1000);
+                }
+
+                modalMask.style.display = 'flex';
+
+            }
+
+            OpenTradePanel()
+            {
+                var orderPanel=document.getElementById('OrderPanel');
+                orderPanel.style.display="block";
+                orderPanel.style.width = '350px';
+
+                this.OnSize();
+            }
+
+            CloseTradePanel()
+            {
+                var orderPanel=document.getElementById('OrderPanel');
+                orderPanel.style.display="none";
+
+                this.OnSize();
+            }
+
+            GetHQChartData(option)
+            {
+                if (!option) return null;
+
+                var data=null;
+                if (option.Type=="KLine") 
+                {
+                    data=this.KLineCtrl.GetGraphicsDescription({ DataRange:{ Count:500 }});  //取最近200条K线，节省token
+                }
+                else if (option.Type=="Minute") 
+                {
+                    data=this.MinuteCtrl.GetGraphicsDescription(option);
+                }
+                else if (option.Type=="ScrollText")
+                {
+                    data=this.ScrollTextCtrl.GetGraphicsDescription(option);
+                }
+                else if (option.Type=="SelfReport")
+                {
+                    data=this.SelfReport.GetGraphicsDescription(option);
+                }
+
+                return data;
+            }
+
+            //区间分析
+            KLineSelectedDataAnalyze(data)
+            {
+                var seletedData=data.Args[0];
+                if (!seletedData || !seletedData.Data) return;
+                var kData=seletedData.Data;
+                if (!IFrameSplitOperator.IsNonEmptyArray(kData.Data)) return;
+                var startItem=kData.Data[seletedData.Start];
+                var endItem=kData.Data[seletedData.End];
+
+                var option=
+                {
+                    DataRange:
+                    { 
+                        Date:
+                        { 
+                            Start:{Date:startItem.Date, Time:startItem.Time},
+                            End:{ Date:endItem.Date, Time:endItem.Time}
+                        } 
+                    }
+                }
+
+                var data=this.KLineCtrl.GetGraphicsDescription(option);
+                if (!data) return;
+
+                this.AICharV2.Show();
+
+                // 设置文件名
+                var content=data.Data;
+                var date=new Date();
+                var fileName = `${data.Symbol} 区间数据-${date.getHours()*1000000+date.getMinutes()*100+date.getSeconds()}.txt`;
+                var file={ Content:data.Data, Name:fileName, Message:`上传【${data.Name} ${data.Symbol}】区间数据`};
+
+                this.AICharV2.AddMessage("分析区间数据,总结下这个股票表现", 'user');
+                this.AICharV2.SendMessage("分析区间数据文件,总结下这个股票表现.", file);
+            }
+
+            OnSendAIMessage(data)
+            {
+                if (!data) return;
+
+                this.AICharV2.Show();
+
+                var file=null;
+                if (data.File) file=data.File;
+                var prompt=data.Prompt;
+
+                this.AICharV2.AddMessage(data.Message, 'user');
+                this.AICharV2.SendMessage(data.Prompt, file);
+            }
+
+            //区间分析
+            MinuteSelectedDataAnalyze(data)
+            {
+                var seletedData=data.Args[0];
+                if (!seletedData || !seletedData.Data) return;
+                var kData=seletedData.Data;
+                if (!IFrameSplitOperator.IsNonEmptyArray(kData.Data)) return;
+                var startItem=kData.Data[seletedData.Start];
+                var endItem=kData.Data[seletedData.End];
+
+                var option=
+                {
+                    DataRange:
+                    { 
+                        Date:
+                        { 
+                            Start:{Date:startItem.Date, Time:startItem.Time},
+                            End:{ Date:endItem.Date, Time:endItem.Time}
+                        } 
+                    }
+                }
+
+                var data=this.MinuteCtrl.GetGraphicsDescription(option);
+                if (!data) return;
+
+                this.AICharV2.Show();
+
+                // 设置文件名
+                var content=data.Data;
+                var date=new Date();
+                var fileName = `${data.Symbol} 区间数据-${date.getHours()*1000000+date.getMinutes()*100+date.getSeconds()}.txt`;
+                var file={ Content:data.Data, Name:fileName, Message:`上传【${data.Name} ${data.Symbol}】区间数据`};
+
+                this.AICharV2.AddMessage("分析区间数据,总结下这个股票表现", 'user');
+                this.AICharV2.SendMessage("分析区间数据文件,总结下这个股票表现.", file);
+            }
+
+            OnClickBottomToolbar(data, obj) {
+                if (data.ID == 2) //设置
+                {
+                    this.OnSettings();
+                }
+                else if (data.ID == 1)    //网络
+                {
+
+                }
+                else if (data.ID == 3)    //搜索
+                {
+                    this.KeyboardCtrl.Show();
+                }
+            }
+
+            UpdateNetworkStatus(data) {
+                if (this.StatusBarCtrl) this.StatusBarCtrl.UpdateNetworkStatus(data);
+            }
+
+            OnKeyboardSelected(data) {
+                var selItem = data.RowData;
+                if (selItem.Data.Type === 1 || selItem.Data.Type === 2 || selItem.Data.Type === 3 || selItem.Data.Type === 4)  //1=股票 2=指数 3=期货 4=期权
+                {
+                    this.ChangeSymbol(selItem.Data.Symbol);
+                }
+
+                /*
+                else if (selItem.Data.Type===1)
+                {
+                    klineControl.Chart.Focus();
+                    klineControl.Chart.ChangeIndex(0,selItem.Data.Index);
+                }
+                else if (selItem.Data.Type===2)
+                {
+                    alert(`跳转'${selItem.Data.PageName}'页面`);
+                }
+                */
+            }
+
+            OnKeyboardShow(data) {
+                this.KLineCtrl.ClearRestoreFocusTimer();
+
+                //调整显示位置， 留出底部状态栏
+                var statusBarHeight = this.GetStatusBarHeight();
+                var height = $(window).height();
+                var width = $(window).width();
+                var y = height - statusBarHeight - data.Height - 3;
+                data.Y = y;
+            }
+
+
+            OnRecvPageMessage(event) {
+                console.log('[ChartContainer::OnRecvPageMessage]', event.key, event.newValue);
+                if (event.key != PAGE_MESSAGE_KEY) return;
+                var msgData = JSON.parse(event.newValue);
+                if (!msgData) return;
+
+                switch (msgData.ID) {
+                    case PAGE_MESSAGE_ID.CLICK_REPORT_ROW_ID:
+                    case PAGE_MESSAGE_ID.CLICK_TREPORT_ROW_ID:
+                        this.ChangeSymbol(msgData.Symbol);
+                        break;
+                }
+            }
+        }
+
+        $(function () {
+            EnvironmentVariable.Load();
+
+            var control = new ChartContainer();
+            control.Create();
+            window.HQControl = control;
+
+
+        })
+
+
+    </script>
+
+    <!-- ===== 训练浮层(叠加在完整终端上, 复用扩展供数) ===== -->
+    <style>
+      #btnTrain{position:fixed;top:8px;right:12px;z-index:10003;padding:6px 14px;background:#0b5cad;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:13px}
+      #trainMenu{display:none;position:fixed;top:40px;right:12px;z-index:10002;background:#1e1e1e;border:1px solid #3a3a3a;border-radius:4px;overflow:hidden;min-width:160px;box-shadow:0 4px 12px rgba(0,0,0,.5)}
+      #trainMenu .tmi{padding:9px 16px;cursor:pointer;font-size:13px;color:#ddd}
+      #trainMenu .tmi:hover{background:#0b5cad;color:#fff}
+      #trainOverlay{display:none;position:fixed;inset:0;z-index:10001;background:#141414;color:#ccc;font-family:Arial}
+      #trainOverlay .tbar{padding:6px 10px;display:flex;gap:8px;align-items:center;border-bottom:1px solid #2a2a2a;flex-wrap:wrap}
+      #trainOverlay .tbtn{padding:4px 10px;border:1px solid #3a3a3a;border-radius:4px;background:#1e1e1e;color:#ddd;cursor:pointer;font-size:13px}
+      #trainOverlay .tbtn.buy{background:#1a6b3c;color:#fff;border-color:#1a6b3c}
+      #trainOverlay .tbtn.sell{background:#9b2226;color:#fff;border-color:#9b2226}
+      #trainOverlay input{padding:4px;background:#1e1e1e;border:1px solid #3a3a3a;color:#ddd;border-radius:4px}
+      #trainOverlay input[type=date]{color-scheme:dark}
+      #trainKline{width:100%;height:calc(100vh - 52px);position:relative}
+      #trainOverlay .tag{font-size:12px;color:#888}
+    </style>
+    <button id="btnTrain">🎯 训练 ▾</button>
+    <div id="trainMenu">
+      <div class="tmi" id="mKline">📈 K线逐根训练</div>
+      <div class="tmi" id="mMinute">⏱ 分时按分钟训练</div>
+    </div>
+    <div id="trainOverlay">
+      <div class="tbar">
+        <input id="tSymbol" value="600006.sh" style="width:90px" title="股票(默认取面板当前)"/>
+        <input type="date" id="tDate" style="width:142px" title="训练起始日期(点日历选; 留空=最新)"/><span class="tag" style="color:#6a6a6a">留空=最新</span>
+        <span class="tbtn" id="tLoad">加载/重训</span>
+        <span class="tag">|</span>
+        <span class="tbtn" id="tNext">下一根</span>
+        <label class="tag"><input type="checkbox" id="tAuto"/> 自动</label>
+        <span class="tbtn" id="tReset">重新开始</span>
+        <span class="tag">|</span>
+        <span class="tbtn buy" id="tBuy">[ 买 ]</span>
+        <span class="tbtn sell" id="tSell">[ 卖 ]</span>
+        <span class="tag">|</span>
+        <span class="tag" id="tInfo">--</span>
+        <span class="tag" id="tScore" style="color:#ffd54f">成绩:</span>
+        <span class="tbtn" id="tBao" style="background:#b8860b;color:#fff;border-color:#b8860b">📒 宝典</span>
+        <a id="tReview" href="../samples/review.html" target="_blank" style="color:#5ab0ff;text-decoration:none;font-size:13px">📊 复盘</a>
+        <a id="tBaodian" href="../samples/baodian.html" target="_blank" style="color:#ffd54f;text-decoration:none;font-size:13px">📖 宝典库</a>
+        <span class="tbtn" id="tExit" style="margin-left:auto">← 返回行情面板</span>
+      </div>
+      <div id="trainKline"></div>
+    </div>
+    <!-- 宝典对话框 -->
+    <div id="baoDlg" style="display:none;position:fixed;inset:0;z-index:10006;background:rgba(0,0,0,.45)">
+      <div style="width:620px;margin:9vh auto;background:#23262b;border:1px solid #3a3a3a;border-radius:6px;padding:14px 16px;color:#ddd;box-shadow:0 8px 30px rgba(0,0,0,.6)">
+        <div style="font-weight:bold;font-size:15px;margin-bottom:10px;color:#ffd54f">📒 添加宝典</div>
+        <div style="display:flex;gap:14px">
+          <div style="flex:1;font-size:13px">
+            <div style="margin-bottom:6px">品种: <b id="baoSym" style="color:#5ab0ff"></b><span style="color:#888;margin-left:14px">行情时间: <span id="baoTime" style="color:#ccc"></span></span></div>
+            <div style="margin-bottom:6px">分组: <input id="baoGrp" list="baoGrpList" value="默认分组" style="width:140px"/></div>
+            <datalist id="baoGrpList"></datalist>
+            <div style="margin-bottom:6px">名称: <input id="baoName" style="width:100%;box-sizing:border-box"/></div>
+            <div style="margin-bottom:6px">备注:</div>
+            <textarea id="baoNote" rows="6" style="width:100%;box-sizing:border-box;background:#1a1c1f;color:#ddd;border:1px solid #3a3a3a" placeholder="当时对这只票的观点/看法/为什么操作…"></textarea>
+            <div style="margin-top:6px">操作: <input id="baoOp" style="width:220px" title="如:买入 5.13×100 / 清仓 / 无操作·只记观点"/></div>
+          </div>
+          <div style="width:230px">
+            <div style="font-size:13px;margin-bottom:4px">快照:</div>
+            <img id="baoSnap" style="width:100%;border:1px solid #3a3a3a;background:#111"/>
+          </div>
+        </div>
+        <div style="text-align:right;margin-top:12px">
+          <span class="tbtn" id="baoOk" style="background:#0b5cad;color:#fff;border-color:#0b5cad">确定</span>&nbsp;<span class="tbtn" id="baoCancel">取消</span>
+        </div>
+      </div>
+    </div>
+    <script>
+    (function(){
+      var Train = {
+        Chart:null, Latest:null, Pos:null, Rounds:[], Cash:1000000, Capital:1000000, OrderID:1000, WS:null, HD:null,
+        Init:function(){
+          var self=this;
+          this.WS = new HQChartWSClient(); this.WS.Create();
+          this.HD = new HQData(); this.HD.WSClient = this.WS;
+          var black = HQChartStyle.GetStyleConfig(STYLE_TYPE_ID.BLACK_ID);
+          JSChart.SetStyle(black);
+          this.Chart = JSChart.Init(document.getElementById('trainKline'), false, true);
+          this.Option = {
+            Type:'K线训练',
+            Windows:[ {Index:"MA"}, {Index:"MACD"}, {Index:"VOL"} ],
+            Symbol: document.getElementById('tSymbol').value || "600006.sh",
+            IsAutoUpdate:false, IsShowRightMenu:true,
+            CorssCursorInfo:{ Right:2, Bottom:1, DateFormatType:3, IsShowCorss:true },
+            DrawTool:{},
+            KLine:{ Right:0, Period:0, MaxRequestDataCount:8000, MaxRequestMinuteDayCount:100, IsShowTooltip:true, DrawType:0, RightSpaceCount:2, DataWidth:10 },
+            KLineTitle:{ IsShowName:true, IsShowSettingInfo:true, IsTitleShowLatestData:true },
+            Border:{ Left:0, Right:20, Bottom:20, Top:25, AutoLeft:{Blank:10,MinWidth:80}, AutoRight:{Blank:5,MinWidth:80} },
+            Frame:[ {IsShowLeftText:false}, {IsShowLeftText:false}, {IsShowLeftText:false, SplitType:1} ],
+            ExtendChart:[ {Name:'背景图', FrameID:0} ],
+            Train:{ DataCount:300 },
+            NetworkFilter:(data,callback)=>{ self.HD.NetworkFilter(data, callback, {ChartName:"TrainChart"}); }
+          };
+          this.Option.EventCallback=[ { event:JSCHART_EVENT_ID.RECV_TRAIN_MOVE_STEP, callback:(e,d,o)=>{ self.OnMove(e,d,o); } } ];
+          this.Chart.SetOption(this.Option);
+          this.Chart.SetFocus();
+        },
+        OnMove:function(e,data){
+          this.Latest = data.LastShowData;
+          if(!this.Latest){ document.getElementById('tInfo').innerText='训练结束'; return; }
+          var dt = `${this.Latest.Date}` + (this.Latest.Time?` ${this.Latest.Time}`:'');
+          var ps = this.Pos? ` | 持仓${this.Pos.vol}@${this.Pos.avg.toFixed(2)} 浮${((+this.Latest.Close-this.Pos.avg)*this.Pos.vol)>=0?'+':''}${((+this.Latest.Close-this.Pos.avg)*this.Pos.vol).toFixed(0)}` : '';
+          document.getElementById('tInfo').innerText = `${data.Description} | ${dt} | 价:${(+this.Latest.Close).toFixed(2)} | 剩:${data.TrainDataCount}${ps}`;
+          if(data.TrainDataCount<=0) this.Latest=null;
+        },
+        Next:function(){ this.Chart.JSChartContainer.MoveNextKLineData(); },
+        Run:function(){ this.Chart.JSChartContainer.Run(); },
+        Stop:function(){ this.Chart.JSChartContainer.Stop(); },
+        Buy:function(){ if(!this.Latest)return; ++this.OrderID;
+          var d={Price:this.Latest.Close,Vol:10,Op:0,ID:this.OrderID};
+          if(!this.Pos) this.Pos={fills:[],avg:0,vol:0,openDate:this.Latest.Date,openTime:this.Latest.Time};
+          this.Pos.fills.push({Price:d.Price,Vol:d.Vol,Date:this.Latest.Date,Time:this.Latest.Time});
+          var tcost=0,tv=0; this.Pos.fills.forEach(f=>{tcost+=f.Price*f.Vol;tv+=f.Vol;}); this.Pos.avg=tcost/tv; this.Pos.vol=this.Pos.fills.reduce((s,f)=>s+f.Vol,0);
+          document.getElementById('tBuy').style.display=''; document.getElementById('tSell').style.display='';
+          this.Chart.JSChartContainer.BuyOrSell(d,false); this.Chart.JSChartContainer.MoveNextKLineData(); this.Score(); },
+        Sell:function(){ if(!this.Latest||!this.Pos)return; ++this.OrderID;
+          var d={Price:this.Latest.Close,Vol:this.Pos.vol,Op:1,ID:this.OrderID};
+          var pnl=(d.Price-this.Pos.avg)*this.Pos.vol, win=d.Price>=this.Pos.avg;
+          var round={Buy:{Price:this.Pos.avg,Vol:this.Pos.vol,Date:this.Pos.openDate,Time:this.Pos.openTime},
+                     Sell:{Price:d.Price,Date:this.Latest.Date,Time:this.Latest.Time}, pnl:pnl, win:win};
+          this.Rounds.push(round); this.saveTrade(round); this.Cash+=pnl; this.Pos=null;
+          document.getElementById('tSell').style.display='none'; document.getElementById('tBuy').style.display='';
+          this.Chart.JSChartContainer.BuyOrSell(d,false); this.Chart.JSChartContainer.MoveNextKLineData(); this.Score(); },
+        saveTrade:function(it){ try {
+          var sym=document.getElementById('tSymbol').value||"600006.sh";
+          fetch("http://127.0.0.1:8777/api/trade",{method:"POST",headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({symbol:sym,mode:"kline",buy_time:it.Buy.Date+" "+(it.Buy.Time||""),buy_price:it.Buy.Price,
+              sell_time:it.Sell.Date+" "+(it.Sell.Time||""),sell_price:it.Sell.Price,vol:it.Buy.Vol,pnl:it.pnl})});
+        } catch(e){} },
+        Snap:function(){ var cv=document.querySelector("#trainKline canvas"); return cv?cv.toDataURL("image/png"):""; },
+        saveNote:function(){ try {
+          var sym=document.getElementById("tSymbol").value||"600006.sh";
+          var d=this.Latest? String(this.Latest.Date):""; if(!d){ window.alert("请先进入训练"); return; }
+          var opTxt=this.Pos? ("持仓 "+this.Pos.vol+"@"+this.Pos.avg.toFixed(2)):(this.Rounds.length? "已平仓·观点":"无操作·只记观点");
+          document.getElementById("baoSym").innerText=sym;
+          document.getElementById("baoTime").innerText=d;
+          document.getElementById("baoName").value=sym+"("+d.slice(2,6)+"-"+d.slice(6,8)+")";
+          document.getElementById("baoOp").value=opTxt;
+          document.getElementById("baoNote").value="";
+          document.getElementById("baoSnap").src=this.Snap();
+          fetch("http://127.0.0.1:8777/api/notes").then(r=>r.json()).then(function(j){ var seen={},s="";
+            (j.list||[]).forEach(function(t){ var g=t.grp||"默认分组"; if(!seen[g]){seen[g]=1; s+='<option value="'+g+'"/>';} });
+            document.getElementById("baoGrpList").innerHTML=s; }).catch(function(){});
+          document.getElementById("baoDlg").style.display="block";
+        } catch(e){} },
+        SubmitNote:function(){ try {
+          var sym=document.getElementById("tSymbol").value||"600006.sh";
+          var d=this.Latest? String(this.Latest.Date):"";
+          var op=document.getElementById("baoOp").value.trim();
+          fetch("http://127.0.0.1:8777/api/note",{method:"POST",headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({symbol:sym, mode:"kline",
+              name:document.getElementById("baoName").value.trim(),
+              grp:document.getElementById("baoGrp").value.trim()||"默认分组",
+              op:op, op_time:d, op_price:(this.Latest&&op.indexOf("操作")<0)? this.Latest.Close:null,
+              bar_time:d+" "+(this.Latest&&this.Latest.Time?this.Latest.Time:""),
+              comment:document.getElementById("baoNote").value.trim(),
+              snapshot:document.getElementById("baoSnap").src})});
+          document.getElementById("baoDlg").style.display="none";
+        } catch(e){} },
+        Score:function(){ var c=this.Rounds.length,s=0,bg=[],real=0;
+          for(var i=0;i<this.Rounds.length;++i){ var it=this.Rounds[i]; if(it.win)++s; real+=it.pnl;
+            bg.push({Start:{Date:it.Buy.Date,Time:it.Buy.Time},End:{Date:it.Sell.Date,Time:it.Sell.Time},Color:it.win?'rgba(250,128,114,0.5)':'rgba(152,251,152,0.5)'}); }
+          var r=c>0?(s/c*100).toFixed(0):0, ret=(real/this.Capital*100).toFixed(2);
+          document.getElementById('tScore').innerText=`成绩: 交易${c} 胜${s} 胜率${r}% | 已实现${real>=0?'+':''}${real.toFixed(0)} 收益率${ret}%`;
+          if(this.Chart&&this.Chart.JSChartContainer&&this.Chart.JSChartContainer.ExtendChartPaint)
+            for(var j in this.Chart.JSChartContainer.ExtendChartPaint){ var p=this.Chart.JSChartContainer.ExtendChartPaint[j]; if(p.ClassName=='BackgroundPaint'){p.Data=bg;} } },
+        Restart:function(){ this.Pos=null; this.Rounds=[]; this.Cash=this.Capital; this.Latest=null;
+          document.getElementById('tScore').innerText='成绩:'; document.getElementById('tInfo').innerText='加载中...';
+          document.getElementById('tBuy').style.display=''; document.getElementById('tSell').style.display='none';
+          if(this.Chart&&this.Chart.JSChartContainer&&this.Chart.JSChartContainer.ExtendChartPaint)
+            for(var j in this.Chart.JSChartContainer.ExtendChartPaint){ var p=this.Chart.JSChartContainer.ExtendChartPaint[j]; if(p.ClassName=='BackgroundPaint'){p.Data=null;} }
+          var td=(document.getElementById('tDate').value||'').replace(/-/g,''); var topt={DataCount:300}; if(td) topt.DateTime={Date:parseInt(td)};
+      this.Chart.JSChartContainer.RestartTrain({ Symbol:document.getElementById('tSymbol').value||"600006.sh", Train:topt, Period:0, Right:0 }); }
+      };
+      window.Train = Train;
+      var inited=false;
+      function openTrain(){ document.getElementById('trainOverlay').style.display='block'; document.getElementById('btnTrain').style.display='none';
+        var cur = (window.HQControl && window.HQControl.Symbol) ? window.HQControl.Symbol : '';
+        if(cur) document.getElementById('tSymbol').value = cur;   // 自动带入面板当前股票
+        if(!inited){ Train.Init(); inited=true; } else { Train.Restart(); }
+        setTimeout(()=>{ Train.Chart.OnSize(); }, 60); }
+      function closeTrain(){ document.getElementById('trainOverlay').style.display='none'; document.getElementById('btnTrain').style.display=''; Train.Stop(); }
+      document.getElementById('btnTrain').onclick=function(e){ e.stopPropagation(); var m=document.getElementById('trainMenu'); m.style.display=(m.style.display==='block')?'none':'block'; };
+      document.getElementById('mKline').onclick=function(){ document.getElementById('trainMenu').style.display='none'; openTrain(); };
+      document.getElementById('mMinute').onclick=function(){ var s=(window.HQControl&&window.HQControl.Symbol)||''; window.location.href='../samples/minute_train.html'+(s?('?symbol='+encodeURIComponent(s)):''); };
+      document.addEventListener('click',function(){ var m=document.getElementById('trainMenu'); if(m)m.style.display='none'; });
+      document.getElementById('tExit').onclick=closeTrain;
+      document.getElementById('tNext').onclick=()=>Train.Next();
+      document.getElementById('tLoad').onclick=()=>Train.Restart();
+      document.getElementById('tReset').onclick=()=>Train.Restart();
+      document.getElementById('tBuy').onclick=()=>Train.Buy();
+      document.getElementById('tSell').onclick=()=>Train.Sell();
+      document.getElementById('tBao').onclick=()=>Train.saveNote();
+      document.getElementById('baoOk').onclick=()=>Train.SubmitNote();
+      document.getElementById('baoCancel').onclick=function(){ document.getElementById('baoDlg').style.display='none'; };
+      document.getElementById('tAuto').onchange=function(){ this.checked?Train.Run():Train.Stop(); };
+      document.getElementById('tSell').style.display='none';
+      document.addEventListener('keydown',function(e){ if(document.getElementById('trainOverlay').style.display!=='block')return;
+        if(e.code==='Space'){e.preventDefault();Train.Next();} else if(e.key==='b'||e.key==='B'){Train.Buy();} else if(e.key==='s'||e.key==='S'){Train.Sell();} });
+    })();
+    </script>
+</body>
+
+</html>
+
+
+<style>
+    html,
+    body {
+        height: 100%;
+        overflow-x: hidden;
+    }
+
+    body {
+        margin: 0px;
+        font-size: 14px;
+        background-color: var(--BGColor);
+    }
+
+    #FullDemo {
+        display: flex;
+        height: 800px
+    }
+
+    #BottomStatusBar {
+        width: 100%;
+        height: 30px;
+    }
+
+    #StatuBarCtrl {
+        width: 100%;
+        height: 100%;
+        border-bottom: solid 1px var(--BorderColor);
+    }
+
+    #ScrollText {
+        width: 100%;
+        height: 25px;
+    }
+
+    #ScrollTextCtrl {
+        width: 100%;
+        height: 100%;
+    }
+
+    #CenterPanel {
+        width: 500px;
+        height: 100%;
+    }
+
+    #LeftPanel {
+        width: 250px;
+        height: 100%;
+        margin-right: 2px;
+        border-right: solid 1px var(--BorderColor);
+    }
+
+    #RightPanel {
+        width: 300px;
+        height: 100%;
+        border-left: solid 1px var(--BorderColor);
+    }
+
+    #OrderPanel
+    {
+        width:350px;
+        height: 100%;
+        border-left: solid 1px var(--BorderColor);
+        display: none;
+    }
+
+    #OrderCtrl
+    {
+        width: 100%;
+        height: calc(100% - 35px);;
+        position: relative;
+    }
+
+    #OrderPanel_Title
+    {
+        width: 100%;
+        height: 20px;
+        color:var(--TabTextColor);
+        border-bottom: solid 1px var(--BorderColor);
+        display: flex;
+    }
+
+    #OrderPanel_Close_Button
+    {
+        font-size: 20px;
+        margin-left: 5px;
+        cursor: default; /* 普通箭头 */
+    }
+
+    #OrderPanel_Close_Button:hover 
+    {
+        color:var(--TabTextColor_hover);
+    }
+
+
+    #PeriodTab {
+        display: flex;
+        width: 100%;
+        border-bottom: solid 1px var(--BorderColor);
+
+        background-color: var(--BGColor);
+        line-height: 30px;
+    }
+
+
+    #ChartContainer {
+        width: 100%;
+        height: calc(100% - 35px);
+        background-color: var(--BGColor);
+        overflow-x: hidden;
+    }
+
+    #KLine {
+        width: 100%;
+        height: 100%;
+    }
+
+    #KLineCtrl {
+        width: 100%;
+        height: 100%;
+        position: relative;
+    }
+
+    #Minute {
+        width: 100%;
+        height: 100%;
+    }
+
+    #MinuteCtrl {
+        width: 100%;
+        height: 100%;
+        position: relative;
+    }
+
+    .TabItem {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        padding-left: 5px;
+        padding-right: 5px;
+        border-right: solid 1px var(--BorderColor);
+        cursor: default;
+        background-color: var(--TabItemBG);
+        color: var(--TabTextColor);
+
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+
+    .SpaceItem {
+        width: 50px;
+        border-right: solid 1px var(--BorderColor);
+    }
+
+
+    #Report {
+        width: 100%;
+        height: 100%;
+    }
+
+    #ReportCtrl {
+        width: 100%;
+        height: 100%;
+        position: relative;
+    }
+
+
+    #StockInfo_Top {
+        height: 100px;
+        width: 100%;
+    }
+
+    #StockInfo_Bottom {
+        width: 300px;
+        height: 50%;
+    }
+
+    #StockInfo_Bottom_Tab {
+        display: flex;
+        width: 100%;
+        border-bottom: solid 1px var(--BorderColor);
+
+        background-color: var(--BGColor);
+        line-height: 25px;
+    }
+
+    #StockBaseData {
+        width: 100%;
+        height: 100%;
+    }
+
+    #DealCtrl {
+        width: 100%;
+        height: 100%;
+        position: relative;
+    }
+
+    #MinMinuteCtrl {
+        width: 100%;
+        height: 100%;
+        position: relative;
+    }
+
+    #StockChangeCtrl {
+        width: 100%;
+        height: 100%;
+        position: relative;
+    }
+
+    :root {
+        --BGColor: rgb(255, 255, 255);
+        --TabItemBG: rgb(242, 242, 242);
+        --BorderColor: rgb(206, 206, 206);
+        --TabTextColor: rgb(90, 90, 90);
+        --TabTextColor_hover:rgb(0,0,0);
+    }
+
+    /*
+    白色风格
+*/
+    :root[hqchart_style='0'],
+    :root[hqchart_style='defined'] {
+        --BGColor: rgb(255, 255, 255);
+        --TabItemBG: rgb(242, 242, 242);
+        --BorderColor: rgb(206, 206, 206);
+        --TabTextColor: rgb(90, 90, 90);
+        --TabTextColor_hover:rgb(10,10,10);
+    }
+
+    /*
+    黑色风格
+*/
+    :root[hqchart_style='1'] {
+        --BGColor: rgb(0, 0, 0);
+        --TabItemBG: rgb(38, 38, 38);
+        --BorderColor: rgb(74, 74, 74);
+        --TabTextColor: rgb(204, 204, 204);
+        --TabTextColor_hover:rgb(255,255,255);
+    }
+
+
+    /*
+设置弹框 AI生成
+*/
+
+    /* 弹框遮罩层 */
+    .modal-mask {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        /* 默认隐藏 */
+        display: none;
+    }
+
+    /* 弹框主体 */
+    .modal-content {
+        width: 400px;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    /* 弹框标题 */
+    .modal-title {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #eee;
+    }
+
+    /* 表单项样式 */
+    .form-item {
+        margin-bottom: 20px;
+    }
+
+    .form-item label {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 14px;
+        color: #333;
+    }
+
+    .form-item input {
+        width: 90%;
+        padding: 10px;
+        font-size: 14px;
+        border: 1px solid #dcdfe6;
+        border-radius: 4px;
+        outline: none;
+        transition: border-color 0.3s;
+    }
+
+    .form-item input:focus {
+        border-color: #409eff;
+    }
+
+    /* 按钮组样式 */
+    .btn-group {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+
+    .btn {
+        padding: 8px 16px;
+        font-size: 14px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .btn-cancel {
+        color: #666;
+        background-color: #f5f5f5;
+    }
+
+    .btn-cancel:hover {
+        background-color: #e5e5e5;
+    }
+
+    .btn-save {
+        color: #fff;
+        background-color: #409eff;
+    }
+
+    .btn-save:hover {
+        background-color: #66b1ff;
+    }
+
+    .Coze_AI_Char_Dialog_Div 
+    {
+        font-family: "微软雅黑";
+        /*display: flex;*/
+        border: 1px solid;
+        width: fit-content;
+        border-color: var(--HQChart-DialogSearchIndex-BorderColor);
+        visibility:hidden;
+        position: absolute;
+        background-color: var(--HQChart-DialogSearchIndex-BGColor);
+        color: var(--HQChart-DialogSearchIndex-Color);
+        left: 1px;
+        top: 1px;
+        z-index: 99;
+        width: 800px;
+        height: 60%;
+        color:var(--HQChart-DialogSearchIndex-TitleColor);
+    }
+
+    .Coze_AI_Char_Container_Div
+    {
+        width: 800px;
+        height: 95%;
+        box-sizing: border-box;
+        overflow: auto;
+    }
+
+    .Coze_AI_Char_Result_Div 
+    {
+        margin-top: 20px;
+        padding: 15px;
+        background: var(--HQChart-DialogSearchIndex-BGColor);
+        border: 1px solid var(--HQChart-DialogSearchIndex-BorderColor);;
+        border-radius: 4px;
+        min-height: 100px;
+        white-space: pre-wrap;
+        font-size: 14px;
+        line-height: 1.6;
+        display: none;
+    }
+
+    /* AI Char */
+
+    .HQChart_AI_Float_Button
+    {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: rgba(78,110,242,0.6);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        z-index: 9998;
+        user-select: none;
+        transition: transform 0.2s;
+    }
+
+    .HQChart_AI_Float_Button:hover 
+    {
+        transform: scale(1.05);
+    }
+
+    .HQChart_AI_Chat_Box
+    {
+        position: fixed;
+        bottom: 100px;
+        right: 30px;
+        width: 650px;
+        height: 800px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+        display: none;
+        flex-direction: column;
+        z-index: 9999;
+        overflow: hidden;
+    }
+
+    .HQChart_AI_Chat_Header 
+    {
+        padding: 14px 16px;
+        background: #4e6ef2;
+        color: white;
+        font-weight: bold;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: move;
+        gap: 10px;
+    }
+
+    .HQChart_AI_Header-Left 
+    {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    /* 模型下拉框样式 */
+    .HQChart_AI_Model_Select 
+    {
+        padding: 3px 6px;
+        border-radius: 6px;
+        border: none;
+        outline: none;
+        font-size: 12px;
+        background: rgba(255,255,255,0.25);
+        color: #fff;
+        cursor: pointer;
+    }
+
+    .HQChart_AI_Model_Select option 
+    {
+        color: #333;
+    }
+
+    .HQChart_AI_Clear_Button
+    {
+        cursor: pointer;
+        font-size: 18px;
+        user-select:none;
+    }
+
+    .HQChart_AI_Header_Buttons 
+    {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .HQChart_AI_Close_Button 
+    {
+        cursor: pointer;
+        font-size: 20px;
+    }
+
+    .HQChart_AI_Message_List 
+    {
+        flex: 1;
+        padding: 16px;
+        overflow-y: auto;
+        background: #f5f7fa;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        white-space: pre-wrap !important;
+    }
+
+    /* 单条消息容器（头像 + 推理 + 回答） */
+    .HQChart_AI_Message_Wrap 
+    {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    /* AI头像 */
+    .HQchart_AI_Avatar
+    {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: #f2533d;
+        color: #fff;
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    /* 右侧内容容器：推理+回答上下排列 */
+    .HQChart_AI_Content_Wrap 
+    {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    /* 推理过程框 */
+    .HQChart_AI_Reason_Box 
+    {
+        padding: 10px 12px;
+        background: #f0f1f3;
+        border-radius: 10px;
+        font-size: 13px;
+        color: #666;
+        line-height: 1.5;
+        white-space: pre-wrap;
+    }
+
+    /* 正式回答气泡 */
+    .HQChart_AI_AI_Message
+    {
+        max-width: 80%;
+        padding: 8px 12px;
+        border-radius: 14px;
+        line-height: 1.6;
+        font-size: 14px;
+        word-break: break-all;
+        white-space: pre-wrap !important;
+        background: white;
+        color: #333;
+        border: 1px solid #e5e6eb;
+        align-self: flex-start;
+    }
+
+    .HQChart_AI_Message_Item 
+    {
+        max-width: 80%;
+        padding: 8px 12px;
+        border-radius: 14px;
+        line-height: 1.4;
+        font-size: 14px;
+        word-break: break-all;
+    }
+
+    .HQChart_AI_User_Message_Item 
+    {
+        align-self: flex-end;
+        background: #4e6ef2;
+        color: white;
+    }
+
+    .HQChart_AI_AI_Message_Item 
+    {
+        align-self: flex-start;
+        background: white;
+        color: #333;
+        border: 1px solid #e5e6eb;
+    }
+    
+    .HQChart_AI_AI_Reasoning_Item
+    {
+        align-self: flex-start;
+        background: rgb(220,220,220);
+        color: #333;
+        border: 1px solid #e5e6eb;
+    }
+
+    .HQChart_AI_Typing_cursor
+    {
+        display: inline-block;
+        width: 6px;
+        height: 14px;
+        background: #666;
+        margin-left: 4px;
+        animation: blink 1s infinite;
+    }
+
+
+    .HQChart_AI_Input_Area 
+    {
+        display: flex;
+        align-items: flex-end;
+        padding: 10px;
+        border-top: 1px solid #eee;
+        gap: 6px;
+    }
+
+    .HQChart_AI_Upload_Button
+    {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: #f1f3f6;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        position: relative;
+        padding: 0;
+    }
+
+    .HQChart_AI_Minute_Analyze
+    {
+        color: #ff3333 !important;
+    }
+
+    .HQChart_AI_KLine_Analyze
+    {
+        color: #ff3333 !important;
+    }
+
+    .HQChart_AI_ScrollText_Analyze
+    {
+        color:rgb(255,165,0)
+    }
+
+    .HQChart_AI_Minute_Analyze:hover::after
+    {
+        content: "上传分时图";
+        position: absolute;
+        /* 关键：显示在按钮右侧 */
+        left: calc(100% + 8px); 
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgb(220,220,220);
+        color: rgb(0,0,0);
+        padding: 3px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        white-space: nowrap;
+        z-index: 10;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .HQChart_AI_KLine_Analyze:hover::after
+    {
+        content: "上传K线图";
+        position: absolute;
+        /* 关键：显示在按钮右侧 */
+        left: calc(100% + 8px); 
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgb(220,220,220);
+        color: rgb(0,0,0);
+        padding: 3px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        white-space: nowrap;
+        z-index: 10;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .HQChart_AI_SelfReport_Analyze:hover::after
+    {
+        content: "上传自选股";
+        position: absolute;
+        /* 关键：显示在按钮右侧 */
+        left: calc(100% + 8px); 
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgb(220,220,220);
+        color: rgb(0,0,0);
+        padding: 3px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        white-space: nowrap;
+        z-index: 10;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .HQChart_AI_ScrollText_Analyze:hover::after
+    {
+        content: "上传底部滚动新闻";
+        position: absolute;
+        /* 关键：显示在按钮右侧 */
+        left: calc(100% + 8px); 
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgb(220,220,220);
+        color: rgb(0,0,0);
+        padding: 3px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        white-space: nowrap;
+        z-index: 10;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+
+    .HQChart_AI_input
+    {
+        flex: 1;
+        padding: 10px 14px;
+        border: 1px solid #e5e6eb;
+        border-radius: 20px;
+        outline: none;
+        font-size: 14px;
+        max-height: 60px;
+    }
+
+    .HQChart_AI_Send-Button
+    {
+        padding: 0 16px;
+        height: 36px;
+        background: #4e6ef2;
+        color: white;
+        border: none;
+        border-radius: 20px;
+        cursor: pointer;
+    }
+
+    /* 思考中动画 */
+    .HQChart_AI_Thinking 
+    {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 12px;
+        background: white;
+        border: 1px solid #e5e6eb;
+        border-radius: 14px;
+        align-self: flex-start;
+        font-size: 14px;
+        color: #666;
+    }
+    .HQChart_AI_Thinking_Dot 
+    {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #999;
+        animation: dotBlink 1.4s infinite both;
+    }
+    .HQChart_AI_Thinking_Dot:nth-child(1) { animation-delay: -0.32s; }
+    .HQChart_AI_Thinking_Dot:nth-child(2) { animation-delay: -0.16s; }
+    @keyframes dotBlink 
+    {
+        0%,80%,100% { opacity: 0.2; }
+        40% { opacity: 1; }
+    }
+
+
+.ai-image-preview {
+  max-width: 180px;
+  border-radius: 10px;
+  margin-top: 4px;
+}
+.ai-file-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  background: #f1f3f6;
+  border-radius: 10px;
+  margin-top: 4px;
+}
+.ai-file-icon {
+  font-size: 16px;
+  color: #666;
+}
+
+.QChart_AI_Message_List::-webkit-scrollbar { width: 4px; }
+.QChart_AI_Message_List::-webkit-scrollbar-thumb { background: #ddd; border-radius: 4px; }
+
+</style>

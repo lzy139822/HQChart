@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<title>交易宝典 · 训练观点与操作记录</title>
+<style>
+  body{margin:0;background:#141414;color:#ccc;font-family:Arial;font-size:13px}
+  .bar{padding:10px;display:flex;gap:10px;align-items:center;border-bottom:1px solid #2a2a2a}
+  a.link{color:#5ab0ff;text-decoration:none}
+  .btn{padding:5px 12px;background:#0b5cad;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:13px}
+  #wrap{display:flex;height:calc(100vh - 44px)}
+  #tree{width:280px;border-right:1px solid #2a2a2a;overflow:auto;padding:6px}
+  .grp{padding:6px 8px;color:#ffd54f;font-weight:bold;cursor:pointer}
+  .grp::before{content:'📁 '}
+  .grp.open::before{content:'📂 '}
+  .items{display:none;margin-left:14px}
+  .grp.open+.items{display:block}
+  .item{padding:6px 8px;cursor:pointer;border-radius:4px;color:#ccc}
+  .item:hover{background:#23262b}
+  .item.sel{background:#3a5f8a;color:#fff}
+  .item .d{color:#888;font-size:12px;margin-left:6px}
+  #main{flex:1;overflow:auto;padding:14px}
+  #main img{max-width:100%;border:1px solid #2a2a2a;background:#000}
+  .meta{color:#888;margin:8px 0}
+  .meta b{color:#5ab0ff}
+  .op{display:inline-block;padding:2px 10px;border-radius:3px;background:#b8860b;color:#fff;margin-left:8px}
+  .comment{margin-top:10px;padding:10px;background:#1a1c1f;border:1px solid #2a2a2a;border-radius:4px;white-space:pre-wrap;line-height:1.6}
+  .empty{color:#666;padding:40px;text-align:center}
+  #del{background:#9b2226}
+</style>
+</head>
+<body>
+<div class="bar">
+  <b style="color:#ffd54f">📖 交易宝典</b>
+  <span style="color:#888">记录当时的观点/操作, 回放时直接看图+点位</span>
+  <a class="link" href="../Demo_hqchart/hq_train.html" style="margin-left:auto">← 返回行情面板</a>
+  <a class="link" href="review.html">📊 交易复盘</a>
+</div>
+<div id="wrap">
+  <div id="tree"></div>
+  <div id="main"><div class="empty">← 从左侧选择一条宝典<br/>(在训练里点「📒 宝典」添加: 可只写观点, 也可带操作)</div></div>
+</div>
+<script>
+var API="http://127.0.0.1:8777/api";
+var DATA=[];  // 全部宝典(含快照)
+function load(){
+  fetch(API+'/notes?snapshot=1').then(r=>r.json()).then(function(j){
+    DATA=j.list||[]; renderTree();
+    if(DATA.length) select(DATA[0].id);
+  });
+}
+function renderTree(){
+  var tree=document.getElementById('tree'); tree.innerHTML='';
+  var groups={};
+  DATA.forEach(function(d){ var g=d.grp||'默认分组'; (groups[g]=groups[g]||[]).push(d); });
+  Object.keys(groups).sort().forEach(function(g){
+    var gd=document.createElement('div'); gd.className='grp open'; gd.innerText=g; tree.appendChild(gd);
+    gd.onclick=function(){ this.classList.toggle('open'); };
+    var box=document.createElement('div'); box.className='items'; tree.appendChild(box);
+    groups[g].forEach(function(d){
+      var it=document.createElement('div'); it.className='item'; it.dataset.id=d.id;
+      it.innerHTML=(d.name||d.symbol)+'<span class="d">'+(d.bar_time||'')+'</span>';
+      it.onclick=function(){ select(d.id); };
+      box.appendChild(it);
+    });
+  });
+}
+function select(id){
+  var d=null; DATA.forEach(function(x){ if(x.id===id) d=x; });
+  document.querySelectorAll('.item').forEach(function(e){ e.classList.toggle('sel', +e.dataset.id===id); });
+  var m=document.getElementById('main');
+  if(!d){ m.innerHTML='<div class="empty">未找到</div>'; return; }
+  var mode=d.mode==='minute'?'分时':'K线';
+  m.innerHTML=
+    '<div style="font-weight:bold;font-size:15px;color:#ffd54f">'+(d.name||d.symbol)+'</div>'+
+    '<div class="meta">品种: <b>'+d.symbol+'</b> · '+mode+
+      ' · 行情时间: <b>'+(d.op_time||d.bar_time||'-')+'</b>'+
+      (d.op?('<span class="op">'+d.op+'</span>'):'')+
+      ' <button class="btn" id="del" style="float:right">删除</button></div>'+
+    (d.snapshot?('<img src="'+d.snapshot+'"/>'):'<div class="empty">(无快照)</div>')+
+    '<div class="comment">'+(d.comment||'(无备注)')+'</div>';
+  document.getElementById('del').onclick=function(){ del(d.id); };
+}
+function del(id){
+  if(!window.confirm('删除这条宝典?')) return;
+  fetch(API+'/note/delete?id='+id).then(function(){ load(); });
+}
+load();
+</script>
+</body>
+</html>

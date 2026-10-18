@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<title>训练复盘 · 交易记录与宝典</title>
+<style>
+  body{margin:0;background:#141414;color:#ccc;font-family:Arial;font-size:13px}
+  .bar{padding:10px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;border-bottom:1px solid #2a2a2a}
+  .bar input,.bar select{padding:4px;background:#1e1e1e;border:1px solid #3a3a3a;color:#ddd;border-radius:4px}
+  .btn{padding:5px 12px;background:#0b5cad;color:#fff;border:none;border-radius:4px;cursor:pointer}
+  .btn.gold{background:#b8860b}
+  a.link{color:#5ab0ff;text-decoration:none}
+  h3{margin:14px 10px 6px;color:#ffd54f}
+  table{border-collapse:collapse;width:calc(100% - 20px);margin:0 10px}
+  th,td{border:1px solid #2a2a2a;padding:4px 8px;text-align:left}
+  th{background:#1e1e1e;color:#aaa}
+  tr:nth-child(even){background:#181818}
+  .win{color:#7fd17f}.loss{color:#e08a8a}
+  .note{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border-bottom:1px solid #2a2a2a}
+  .note img{max-width:240px;border:1px solid #333}
+  .note .meta{color:#888;font-size:12px}
+</style>
+</head>
+<body>
+<div class="bar">
+  <b>训练复盘</b>
+  <input id="qSymbol" placeholder="过滤代码(如 600006)"/>
+  <select id="qMode">
+    <option value="">全部模式</option>
+    <option value="kline">K线训练</option>
+    <option value="minute">分时训练</option>
+  </select>
+  <button class="btn" id="refresh">刷新</button>
+  <a class="btn gold" id="expT" href="#" download>导出交易CSV</a>
+  <a class="btn gold" id="expN" href="#" download>导出宝典CSV</a>
+  <a class="link" href="../Demo_hqchart/hq_train.html">← 返回行情面板</a>
+</div>
+
+<h3>交易记录</h3>
+<table id="trades"><thead><tr>
+  <th>#</th><th>代码</th><th>模式</th><th>买时间</th><th>买价</th>
+  <th>卖时间</th><th>卖价</th><th>量</th><th>盈亏</th><th>记录时间</th>
+</tr></thead><tbody></tbody></table>
+
+<h3>宝典(笔记 / 快照)</h3>
+<div id="notes"></div>
+
+<script>
+var API="http://127.0.0.1:8777/api";
+function pnlClass(v){ return v>0?'win':(v<0?'loss':''); }
+function load(){
+  var s=document.getElementById('qSymbol').value.trim();
+  var m=document.getElementById('qMode').value;
+  var q=''; if(s)q+='symbol='+encodeURIComponent(s); if(m){ q+=(q?'&':'')+'mode='+m; }
+  var u=API+'/trades'+(q?'?'+q:'');
+  fetch(u).then(r=>r.json()).then(j=>{
+    var tb=document.querySelector('#trades tbody'); tb.innerHTML='';
+    (j.list||[]).forEach(function(t){
+      var tr=document.createElement('tr');
+      tr.innerHTML='<td>'+t.id+'</td><td>'+t.symbol+'</td><td>'+(t.mode==='minute'?'分时':'K线')+'</td>'+
+        '<td>'+t.buy_time+'</td><td>'+t.buy_price+'</td><td>'+t.sell_time+'</td><td>'+t.sell_price+'</td>'+
+        '<td>'+t.vol+'</td><td class="'+pnlClass(t.pnl)+'">'+t.pnl.toFixed(2)+'</td><td>'+t.created_at+'</td>';
+      tb.appendChild(tr);
+    });
+  });
+  var n=API+'/notes'+(q?'?'+q:'');
+  fetch(n).then(r=>r.json()).then(j=>{
+    var box=document.getElementById('notes'); box.innerHTML='';
+    (j.list||[]).forEach(function(d){
+      var div=document.createElement('div'); div.className='note';
+      var snap = d.snapshot ? ('<img src="'+d.snapshot+'"/>') : '';
+      div.innerHTML=snap+'<div><div class="meta">'+d.symbol+' · '+(d.mode==='minute'?'分时':'K线')+
+        ' · 时点 '+d.bar_time+' · '+d.created_at+'</div><div>'+ (d.comment||'(无点评)') +'</div></div>';
+      box.appendChild(div);
+    });
+  });
+}
+document.getElementById('refresh').onclick=load;
+document.getElementById('expT').onclick=function(){ this.href=API+'/export?type=trades'+(document.getElementById('qSymbol').value.trim()?('&symbol='+encodeURIComponent(document.getElementById('qSymbol').value.trim())):'')+(document.getElementById('qMode').value?('&mode='+document.getElementById('qMode').value):''); };
+document.getElementById('expN').onclick=function(){ this.href=API+'/export?type=notes'+(document.getElementById('qSymbol').value.trim()?('&symbol='+encodeURIComponent(document.getElementById('qSymbol').value.trim())):'')+(document.getElementById('qMode').value?('&mode='+document.getElementById('qMode').value):''); };
+load();
+</script>
+</body>
+</html>

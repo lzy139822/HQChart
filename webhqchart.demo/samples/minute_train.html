@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta charset="utf-8" />
+<title>分时训练(按分钟下单)</title>
+<link rel="stylesheet" href="../jscommon/umychart.resource/css/tools.css" />
+<link rel="stylesheet" href="../jscommon/umychart.resource/font/iconfont.css" />
+<style>
+  body{margin:0;background:#141414;color:#ccc;font-family:Arial}
+  .bar{padding:6px 10px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;border-bottom:1px solid #2a2a2a}
+  .tbtn{padding:4px 10px;border:1px solid #3a3a3a;border-radius:4px;background:#1e1e1e;color:#ddd;cursor:pointer;font-size:13px}
+  .tbtn:hover{background:#2a2a2a}
+  .tbtn.buy{background:#1a6b3c;color:#fff;border-color:#1a6b3c}
+  .tbtn.sell{background:#9b2226;color:#fff;border-color:#9b2226}
+  .tbtn.play{background:#0b5cad;color:#fff;border-color:#0b5cad}
+  input{padding:4px;background:#1e1e1e;border:1px solid #3a3a3a;color:#ddd;border-radius:4px}
+  input[type=range]{width:120px}
+  input[type=date]{color-scheme:dark}
+  #minute{width:100%;height:calc(100vh - 108px);position:relative}
+  .tag{font-size:12px;color:#888}
+  .val{font-size:13px;color:#ffd54f}
+</style>
+</head>
+<body>
+<div class="bar">
+  <a href="../Demo_hqchart/hq_train.html" style="color:#5ab0ff;text-decoration:none;font-size:13px;margin-right:4px">← 返回行情面板</a>
+  <span class="tag">|</span>
+  <input id="symbol" value="600094.sh" style="width:88px" title="股票"/>
+  <input type="date" id="date" style="width:132px" title="点开日历选日期; 留空=最新交易日"/><span class="tag" style="color:#6a6a6a">留空=最新</span>
+  <span class="tbtn play" id="load">加载分时</span>
+  <span class="tag">|</span>
+  <span class="tbtn buy" id="buy">买入</span>
+  <span class="tbtn sell" id="sell">卖出</span>
+  数量<input id="vol" value="100" style="width:56px"/>
+  价格<input id="price" style="width:70px" title="留空=当前分钟价"/>
+  <span class="tbtn play" id="play">▶ 开始</span>
+  速度<input id="speed" type="range" min="40" max="1200" value="300" step="20"/><span class="tag" id="speedVal">300ms/根</span>
+  <span class="tag">|</span>
+  <span class="val" id="info">--</span>
+  <span class="val" id="score">成绩:</span>
+  <span class="tbtn" id="bao" style="background:#b8860b;color:#fff;border-color:#b8860b">📒 宝典</span>
+  <a id="review" href="review.html" target="_blank" style="color:#5ab0ff;text-decoration:none;font-size:13px">📊 复盘</a>
+  <a id="baodian" href="baodian.html" target="_blank" style="color:#ffd54f;text-decoration:none;font-size:13px">📖 宝典库</a>
+</div>
+<div id="minute"></div>
+
+<!-- 宝典对话框(通达信"添加宝典"样式) -->
+<div id="baoDlg" style="display:none;position:fixed;inset:0;z-index:10005;background:rgba(0,0,0,.45)">
+  <div style="width:620px;margin:9vh auto;background:#23262b;border:1px solid #3a3a3a;border-radius:6px;padding:14px 16px;color:#ddd;box-shadow:0 8px 30px rgba(0,0,0,.6)">
+    <div style="font-weight:bold;font-size:15px;margin-bottom:10px;color:#ffd54f">📒 添加宝典</div>
+    <div style="display:flex;gap:14px">
+      <div style="flex:1;font-size:13px">
+        <div style="margin-bottom:6px">品种: <b id="baoSym" style="color:#5ab0ff"></b><span style="color:#888;margin-left:14px">行情时间: <span id="baoTime" style="color:#ccc"></span></span></div>
+        <div style="margin-bottom:6px">分组: <input id="baoGrp" list="baoGrpList" value="默认分组" style="width:140px"/></div>
+        <datalist id="baoGrpList"></datalist>
+        <div style="margin-bottom:6px">名称: <input id="baoName" style="width:100%;box-sizing:border-box"/></div>
+        <div style="margin-bottom:6px">备注:</div>
+        <textarea id="baoNote" rows="6" style="width:100%;box-sizing:border-box;background:#1a1c1f;color:#ddd;border:1px solid #3a3a3a" placeholder="当时对这只票的观点/看法/为什么操作…"></textarea>
+        <div style="margin-top:6px">操作: <input id="baoOp" style="width:220px" title="如:买入 5.13×100 / 清仓 / 无操作·只记观点"/></div>
+      </div>
+      <div style="width:230px">
+        <div style="font-size:13px;margin-bottom:4px">快照:</div>
+        <img id="baoSnap" style="width:100%;border:1px solid #3a3a3a;background:#111"/>
+      </div>
+    </div>
+    <div style="text-align:right;margin-top:12px">
+      <span class="tbtn play" id="baoOk">确定</span>&nbsp;<span class="tbtn" id="baoCancel">取消</span>
+    </div>
+  </div>
+</div>
+
+<script src="../jscommon/umychart.resource/js/jquery.min.js"></script>
+<script src="../jscommon/umychart.resource/js/webfont.js"></script>
+<script src="../jscommon/umychart.network.js"></script>
+<script src="../jscommon/umychart.js"></script>
+<script src="../jscommon/umychart.complier.js"></script>
+<script src="../jscommon/umychart.index.data.js"></script>
+<script src="../jscommon/umychart.style.js"></script>
+<script src="../jscommon/umychart.popMenu.js"></script>
+<script src="../jscommon/umychart.DialogTooltip.js"></script>
+<script src="../jscommon/umychart.DialogDrawTool.js"></script>
+
+<script>
+var API="http://127.0.0.1:8777/api";
+// 从行情面板带过来的股票(?symbol=)
+try{ var _p=new URLSearchParams(location.search); var _s=_p.get('symbol'); if(_s) document.getElementById('symbol').value=_s; }catch(e){}
+var M={
+  Chart:null, full:[], yclose:0, dateInt:0, sym:"", cur:0, playing:false, timer:null,
+  Rounds:[], pos:null, cash:1000000, Capital:1000000,  // 初始资金; pos 可多次加仓
+  Marks:[],  // 买卖点标记 {idx, price, type:'B'|'S'}
+  Init:function(){
+    var self=this;
+    var black=HQChartStyle.GetStyleConfig(STYLE_TYPE_ID.BLACK_ID); JSChart.SetStyle(black);
+    this.Chart=JSChart.Init(document.getElementById('minute'));
+    var opt={
+      Type:'分钟走势图', Symbol:this.sym, IsAutoUpdate:false, DayCount:1, IsShowRightMenu:true,
+      Windows:[ {Index:"VOL"} ],
+      MinuteLine:{ IsDrawAreaPrice:true },
+      MinuteTitle:{ IsShowTime:true, IsShowName:true, IsShowDate:false, IsShowVolTitle:true },
+      MinuteVol:{ BarColorType:1 },
+      CorssCursorInfo:{ Left:1, Right:1, Bottom:1, IsShowCorss:true },
+      EnablePopMenuV2:true, FloatTooltip:{ Enable:true },
+      Border:{ Left:20, Right:20, Top:25, Bottom:25, AutoLeft:{Blank:10,MinWidth:60}, AutoRight:{Blank:10,MinWidth:60} },
+      Frame:[ {Custom:[{Type:0,Position:'right'}]} ],
+      ExtendChart:[ {Name:'MinutePCTooltip'} ],
+      NetworkFilter:(data,callback)=>{ self.Filter(data,callback); }
+    };
+    this.Chart.SetOption(opt);
+    this.Hook();
+  },
+  // hook 容器 Draw: 每次重绘后把买卖点箭头画上去(不会被刷新抹掉)
+  Hook:function(){
+    var self=this; var c=this.Chart && this.Chart.JSChartContainer; if(!c || c._mkHook) return;
+    c._mkHook=true; var orig=c.Draw.bind(c);
+    c.Draw=function(){ orig(); try{ self.DrawMarks(c); }catch(e){} };
+  },
+  DrawMarks:function(c){
+    var f=c.Frame && c.Frame.SubFrame && c.Frame.SubFrame[0] && c.Frame.SubFrame[0].Frame; if(!f) return;
+    var ctx=c.Canvas; if(!ctx) return;
+    ctx.save(); ctx.font='bold 12px Arial'; ctx.textAlign='center';
+    for(var i=0;i<this.Marks.length;++i){
+      var m=this.Marks[i]; if(m.idx>this.cur) continue;
+      var x=f.GetXFromIndex(m.idx), y=f.GetYFromData(m.price);
+      if(m.type==='B'){   // 买: 红色上箭头, 点位下方
+        ctx.fillStyle='#ff3b30';
+        ctx.beginPath(); ctx.moveTo(x,y+7); ctx.lineTo(x-6,y+20); ctx.lineTo(x+6,y+20); ctx.closePath(); ctx.fill();
+        ctx.fillText('买', x, y+33);
+      }else{              // 卖: 绿色下箭头, 点位上方
+        ctx.fillStyle='#00c853';
+        ctx.beginPath(); ctx.moveTo(x,y-7); ctx.lineTo(x-6,y-20); ctx.lineTo(x+6,y-20); ctx.closePath(); ctx.fill();
+        ctx.fillText('卖', x, y-24);
+      }
+    }
+    ctx.restore();
+  },
+  Filter:function(data,callback){
+    if(data.Name==='MinuteChartContainer::RequestMinuteData'){
+      var pts=this.full.slice(0, this.cur+1);
+      callback({ code:0, stock:[{ date:this.dateInt, minute:pts, yclose:this.yclose, symbol:this.sym, name:this.sym }] });
+    } else callback({code:0});
+  },
+  Redraw:function(){ if(this.Chart) this.Chart.ChangeSymbol(this.sym); },
+  Load:function(){
+    var self=this; this.sym=document.getElementById('symbol').value.trim(); this.dateInt=parseInt((document.getElementById('date').value||'').replace(/-/g,''))||0;
+    fetch(`${API}/minute_kline?symbol=${encodeURIComponent(this.sym)}&date=${this.dateInt}`).then(r=>r.json()).then(res=>{
+      var d=res.data||[]; if(!d.length){
+        var extra=res.lc_range? ('\n本地分钟文件含: '+res.lc_range[0]+' ~ '+res.lc_range[1]) : '\n(本地无该票分钟文件, 请在通达信下载1分钟图)';
+        alert('该票该日无分钟数据'+extra+'\n提示: 日期留空=自动加载最新交易日'); return; }
+      this.dateInt=res.date||parseInt(String(d[0][0]).slice(0,8));
+      var ds=String(this.dateInt); document.getElementById('date').value=ds.slice(0,4)+'-'+ds.slice(4,6)+'-'+ds.slice(6,8);
+      self.full = d.map(function(b){ return { time: parseInt(String(b[0]).slice(8,12)), price:b[5], vol:b[6], amount:b[7] }; });
+      self.yclose = d[0][1];
+      self.cur = 0; self.Rounds=[]; self.pos=null; self.cash=1000000; self.Marks=[];
+      if(!self.Chart) self.Init(); else self.Redraw();
+      self.Info(); self.Score();
+    }).catch(e=>alert('取数失败:'+e));
+  },
+  Info:function(){
+    var p=this.cur<this.full.length?this.full[this.cur]:null;
+    var fl=this.pos?((p?p.price:0)-this.pos.avg)*this.pos.vol:0;
+    var ps=this.pos?` | 持仓${this.pos.vol}@${this.pos.avg.toFixed(2)} 浮${fl>=0?'+':''}${fl.toFixed(0)}`:'';
+    document.getElementById('info').innerText = (p? `分钟 ${String(p.time).padStart(4,'0')} 价:${p.price.toFixed(2)} 进度:${this.cur+1}/${this.full.length}` : '完成')+ps;
+    document.getElementById('price').value = p? p.price.toFixed(2):'';
+  },
+  Next:function(){ if(this.cur<this.full.length-1){ this.cur+=1; this.Redraw(); this.Info(); } else this.Pause(); },
+  Play:function(){ var self=this; if(self.playing)return; self.playing=true; document.getElementById('play').innerText='⏸ 暂停';
+    self.timer=setInterval(function(){ self.Next(); }, parseInt(document.getElementById('speed').value)||300); },
+  Pause:function(){ this.playing=false; if(this.timer)clearInterval(this.timer); document.getElementById('play').innerText='▶ 开始'; },
+  Cur:function(){ return this.cur<this.full.length?this.full[this.cur]:null; },
+  Buy:function(){ var p=this.Cur(); if(!p)return; var vol=parseInt(document.getElementById('vol').value)||100; var px=parseFloat(document.getElementById('price').value)||p.price;
+    if(!this.pos) this.pos={fills:[],avg:0,vol:0,openTime:p.time};
+    this.pos.fills.push({price:px, vol:vol, time:p.time});
+    var tc=0,tv=0; this.pos.fills.forEach(f=>{tc+=f.price*f.vol;tv+=f.vol;}); this.pos.avg=tc/tv; this.pos.vol=this.pos.fills.reduce((s,f)=>s+f.vol,0);
+    document.getElementById('buy').style.display=''; document.getElementById('sell').style.display='';
+    this.Marks.push({idx:this.cur, price:px, type:'B'}); this.Repaint(); },
+  Sell:function(){ var p=this.Cur(); if(!p||!this.pos)return; var px=parseFloat(document.getElementById('price').value)||p.price;
+    var pnl=(px-this.pos.avg)*this.pos.vol; this.cash+=pnl;
+    var t={buy:this.pos.avg, sell:px, vol:this.pos.vol, time:this.pos.openTime+'->'+p.time, pnl:pnl, win:px>=this.pos.avg};
+    this.Rounds.push(t); this.pos=null;
+    document.getElementById('sell').style.display='none'; document.getElementById('buy').style.display=''; this.Score();
+    this.Marks.push({idx:this.cur, price:px, type:'S'}); this.Repaint();
+    this.saveTrade(t); },
+  Repaint:function(){ try{ if(this.Chart && this.Chart.JSChartContainer) this.Chart.JSChartContainer.Draw(); }catch(e){} },
+  saveTrade:function(t){ try {
+    var sym=document.getElementById('symbol').value.trim(); var parts=t.time.split('->');
+    fetch(API+"/trade",{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({symbol:sym,mode:"minute",buy_time:this.dateInt+" "+(parts[0]||""),buy_price:t.buy,
+        sell_time:this.dateInt+" "+(parts[1]||""),sell_price:t.sell,vol:t.vol,pnl:t.pnl})});
+  } catch(e){} },
+  saveNote:function(){ try {
+    var p=this.Cur(); if(!p){ window.alert('请先加载分时'); return; }
+    var sym=document.getElementById('symbol').value.trim();
+    var ymd=String(this.dateInt); var hhmm=String(p.time).padStart(4,'0');
+    document.getElementById('baoSym').innerText=sym;
+    document.getElementById('baoTime').innerText=ymd+' '+hhmm;
+    document.getElementById('baoName').value=sym+'('+ymd.slice(2,4)+'-'+ymd.slice(4,6)+'-'+ymd.slice(6,8)+')';
+    document.getElementById('baoOp').value=this.pos
+      ? ('持仓 '+this.pos.vol+'@'+this.pos.avg.toFixed(2))
+      : (this.Rounds.length? '已平仓·观点' : '无操作·只记观点');
+    document.getElementById('baoNote').value='';
+    document.getElementById('baoSnap').src=this.Snap();
+    // 分组建议(历史分组)
+    fetch(API+'/notes').then(r=>r.json()).then(function(j){ var seen={},s='';
+      (j.list||[]).forEach(function(d){ var g=d.grp||'默认分组'; if(!seen[g]){seen[g]=1; s+='<option value="'+g+'"/>';} });
+      document.getElementById('baoGrpList').innerHTML=s; }).catch(function(){});
+    document.getElementById('baoDlg').style.display='block';
+  } catch(e){} },
+  Snap:function(){ var cv=document.querySelector('#minute canvas'); return cv?cv.toDataURL('image/png'):''; },
+  SubmitNote:function(){ try {
+    var p=this.Cur(); var sym=document.getElementById('symbol').value.trim();
+    var op=document.getElementById('baoOp').value.trim();
+    var hhmm=String(p?p.time:0).padStart(4,'0');
+    fetch(API+'/note',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({symbol:sym, mode:'minute',
+        name:document.getElementById('baoName').value.trim(),
+        grp:document.getElementById('baoGrp').value.trim()||'默认分组',
+        op:op, op_time:String(this.dateInt)+' '+hhmm,
+        op_price:p?p.price:null,
+        bar_time:String(this.dateInt)+' '+hhmm,
+        comment:document.getElementById('baoNote').value.trim(),
+        snapshot:document.getElementById('baoSnap').src})});
+    document.getElementById('baoDlg').style.display='none';
+  } catch(e){} },
+  Mark:function(p,type){ /* 交易标识: 叠加到分时(后续接 DRAWICON/存盘) */ console.log('TRADE',type,p.time,p.price); },
+  Score:function(){ var n=this.Rounds.length, win=this.Rounds.filter(t=>t.win).length, total=this.Rounds.reduce((s,t)=>s+t.pnl,0);
+    var ret=(total/this.Capital*100).toFixed(2);
+    var ps=this.pos?` | 持仓${this.pos.vol}@${this.pos.avg.toFixed(2)}`:'';
+    document.getElementById('score').innerText=`成绩: 交易${n} 胜${win} 胜率${n?Math.round(win/n*100):0}% 已实现${total>=0?'+':''}${total.toFixed(0)} 收益${ret}% 资金${this.cash.toFixed(0)}${ps}`; }
+};
+document.getElementById('load').onclick=()=>M.Load();
+document.getElementById('play').onclick=()=>M.playing?M.Pause():M.Play();
+document.getElementById('buy').onclick=()=>M.Buy();
+document.getElementById('sell').onclick=()=>M.Sell();
+document.getElementById('speed').oninput=function(){ document.getElementById('speedVal').innerText=this.value+'ms/根'; };
+document.getElementById('sell').style.display='none';
+document.getElementById('bao').onclick=()=>M.saveNote();
+document.getElementById('baoOk').onclick=()=>M.SubmitNote();
+document.getElementById('baoCancel').onclick=function(){ document.getElementById('baoDlg').style.display='none'; };
+document.addEventListener('keydown',function(e){ if(e.code==='Space'){e.preventDefault(); M.playing?M.Pause():M.Play();} else if(e.key==='ArrowRight'){M.Next();} else if(e.key==='b'||e.key==='B'){M.Buy();} else if(e.key==='s'||e.key==='S'){M.Sell();} });
+window.addEventListener('resize', ()=>{ if(M.Chart)M.Chart.OnSize(); });
+</script>
+</body>
+</html>
